@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- For files saved in Context.getExternalFilesDir() -->
+    <external-files-path name="external_files" path="." />
+    <!-- For files saved in Context.getFilesDir() -->
+    <files-path name="files" path="." />
+    <!-- For cache directories -->
+    <cache-path name="cache" path="." />
+    <external-cache-path name="external_cache" path="." />
+</paths>

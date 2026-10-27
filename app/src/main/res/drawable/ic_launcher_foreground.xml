@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A clean leaf vector path for the launcher logo -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,18 C65,28 72,42 72,58 C72,74 58,88 42,88 C26,88 18,74 18,58 C18,42 36,28 54,18 Z" />
+    <path
+        android:strokeColor="#2E7D32"
+        android:strokeWidth="3"
+        android:pathData="M54,18 C54,42 42,70 42,88" />
+</vector>

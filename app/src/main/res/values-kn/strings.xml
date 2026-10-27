@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ರಬ್ಬರ್ ಗಾರ್ಡ್ AI</string>
+    <string name="project_title">ಮೊಬೈಲ್ ನೆಟ್ ವಿ2 ಬಳಸಿಕೊಂಡು ರಬ್ಬರ್ ಎಲೆ ರೋಗ ವರ್ಗೀಕರಣ</string>
+    <string name="tagline">ಕರ್ನಾಟಕದ ರಬ್ಬರ್ ಬೆಳೆಗಾರರಿಗೆ ಆಫ್‌ಲೈನ್ ಡಿಜಿಟಲ್ ಸಹಾಯ</string>
+    
+    <!-- Onboarding Buttons -->
+    <string name="btn_login">ಲಾಗಿನ್</string>
+    <string name="btn_register">ನೋಂದಾಯಿಸಿ</string>
+    <string name="btn_signup">ಸೈನ್ ಅಪ್</string>
+    <string name="btn_submit">ಸಲ್ಲಿಸು</string>
+    <string name="btn_forgot_password">ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?</string>
+    <string name="btn_skip">ಹೊರಹೋಗು</string>
+    
+    <!-- Form Labels -->
+    <string name="label_username">ಬಳಕೆದಾರ ಹೆಸರು</string>
+    <string name="label_email">ಇಮೇಲ್ ವಿಳಾಸ</string>
+    <string name="label_password">ಪಾಸ್‌ವರ್ಡ್</string>
+    <string name="label_confirm_password">ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ</string>
+    <string name="label_full_name">ಪೂರ್ಣ ಹೆಸರು</string>
+    <string name="label_phone">ದೂರವಾಣಿ ಸಂಖ್ಯೆ</string>
+    <string name="label_location">ಸ್ಥಳ / ಜಿಲ್ಲೆ</string>
+    
+    <!-- Dashboard -->
+    <string name="nav_home">ಮುಖಪುಟ</string>
+    <string name="nav_history">ಇತಿಹಾಸ</string>
+    <string name="nav_profile">ಪ್ರೊಫೈಲ್</string>
+    <string name="nav_settings">ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+    
+    <string name="dashboard_welcome">ಸ್ವಾಗತ,</string>
+    <string name="dashboard_scan_title">ತ್ವರಿತ ರೋಗ ಪರೀಕ್ಷೆ</string>
+    <string name="dashboard_scan_desc">ಆಫ್‌ಲೈನ್ ರೋಗ ಪತ್ತೆಗಾಗಿ ಎಲೆಯನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</string>
+    <string name="btn_capture">ಕ್ಯಾಪ್ಚರ್ ಇಮೇಜ್</string>
+    <string name="btn_gallery">ಗ್ಯಾಲರಿಯಿಂದ ಅಪ್ಲೋಡ್</string>
+    
+    <string name="title_recent_reports">ಇತ್ತೀಚಿನ ವರದಿಗಳು</string>
+    <string name="title_disease_stats">ರೋಗದ ಅಂಕಿಅಂಶಗಳು</string>
+    <string name="empty_recent_reports">ಇನ್ನೂ ಯಾವುದೇ ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗಿಲ್ಲ. ಕ್ಯಾಮೆರಾ ಚಿಹ್ನೆ ಒತ್ತಿ.</string>
+    
+    <!-- Analysis Screens -->
+    <string name="title_prediction">ಫಲಿತಾಂಶಗಳು</string>
+    <string name="title_severity">ರೋಗದ ತೀವ್ರತೆ</string>
+    <string name="title_gradcam">ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್</string>
+    <string name="title_recommendation">ಸಲಹೆಗಳು ಮತ್ತು ಚಿಕಿತ್ಸೆ</string>
+    
+    <string name="label_disease">ಪತ್ತೆಯಾದ ರೋಗ</string>
+    <string name="label_confidence">ಖಾತರಿ ಶೇಕಡಾ</string>
+    <string name="label_time">ತೆಗೆದುಕೊಂಡ ಸಮಯ</string>
+    <string name="label_status">ಸ್ಥಿತಿ</string>
+    <string name="status_diseased">ಸೋಂಕಿತ</string>
+    <string name="status_healthy">ಆರೋಗ್ಯಕರ</string>
+    
+    <string name="tab_original">ಮೂಲ ಚಿತ್ರ</string>
+    <string name="tab_heatmap">ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಚಿತ್ರ</string>
+    
+    <string name="btn_view_severity">ತೀವ್ರತೆ ಪರಿಶೀಲಿಸಿ</string>
+    <string name="btn_view_gradcam">ಹೀಟ್‌ಮ್ಯಾಪ್ ವೀಕ್ಷಿಸಿ</string>
+    <string name="btn_view_recommendations">ಸಲಹೆಗಳು</string>
+    <string name="btn_save_report">ವರದಿ ಉಳಿಸಿ</string>
+    <string name="btn_export_pdf">ಪಿಡಿಎಫ್ ವರದಿ ಡೌನ್‌ಲೋಡ್</string>
+    
+    <!-- Chatbot -->
+    <string name="title_chatbot">ಕೃಷಿ ಸಹಾಯ ಚಾಟ್‌ಬಾಟ್</string>
+    <string name="chatbot_hint">ರೋಗ, ಚಿಕಿತ್ಸೆ, ಗೊಬ್ಬರದ ಬಗ್ಗೆ ಪ್ರಶ್ನೆ ಕೇಳಿ...</string>
+    
+    <!-- Expert Contact -->
+    <string name="title_contact_expert">ಕೃಷಿ ತಜ್ಞರ ಸಂಪರ್ಕ</string>
+    <string name="expert_desc">ಕರ್ನಾಟಕದ ರಬ್ಬರ್ ಮಂಡಳಿ ಅಧಿಕಾರಿಗಳ ದೂರವಾಣಿ ಸಂಖ್ಯೆ</string>
+    
+    <!-- Settings -->
+    <string name="setting_dark_mode">ಡಾರ್ಕ್ ಮೋಡ್</string>
+    <string name="setting_language">ಭಾಷೆ ಬದಲಿಸಿ</string>
+    <string name="setting_voice">ಧ್ವನಿ ಸಹಾಯ (TTS)</string>
+    <string name="setting_notification">ಅಧಿಸೂಚನೆಗಳು</string>
+    <string name="setting_about">ಯೋಜನೆಯ ಬಗ್ಗೆ</string>
+    <string name="setting_help">ಸಹಾಯ ಮತ್ತು FAQ</string>
+    <string name="setting_privacy">ಗೌಪ್ಯತೆ ನೀತಿ</string>
+    <string name="btn_logout">ಲಾಗ್ ಔಟ್</string>
+    
+    <!-- About Project -->
+    <string name="about_text">ಈ ಅಪ್ಲಿಕೇಶನ್ ಕರ್ನಾಟಕದ ಸಣ್ಣ ಪ್ರಮಾಣದ ರಬ್ಬರ್ ಬೆಳೆಗಾರರಿಗೆ ಮುಂಗಾರು ಮತ್ತು ಬೇಸಿಗೆಯಲ್ಲಿ ಎಲೆ ರೋಗಗಳನ್ನು ಸುಲಭವಾಗಿ ಪತ್ತೆಹಚ್ಚಲು ನೆರವಾಗುತ್ತದೆ. ಮೊಬೈಲ್ ನೆಟ್ ವಿ2 ಆರ್ಕಿಟೆಕ್ಚರ್ ಸಹಾಯದಿಂದ ಯಾವುದೇ ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲದೆ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿ 8 ಬಗೆಯ ಎಲೆ ಮಾದರಿಗಳನ್ನು ಪತ್ತೆಹಚ್ಚಲಾಗುತ್ತದೆ. ಓಪನ್ ಸಿವಿ ತಂತ್ರಜ್ಞಾನವನ್ನು ಬಳಸಿ ರೋಗದ ತೀವ್ರತೆಯ ಪ್ರಮಾಣವನ್ನು ಲೆಕ್ಕ ಹಾಕಲಾಗುತ್ತದೆ ಮತ್ತು ಎಲೆಯ ಯಾವ ಭಾಗಕ್ಕೆ ಸೋಂಕು ತಗುಲಿದೆ ಎಂಬುದನ್ನು ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್ ಸ್ಪಷ್ಟವಾಗಿ ತೋರಿಸುತ್ತದೆ.</string>
+</resources>

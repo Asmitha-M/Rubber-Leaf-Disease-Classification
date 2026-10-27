@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <!-- Splash Screen -->
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.rubber.disease.ui.fragments.SplashFragment"
+        android:label="Splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Welcome Screen -->
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.rubber.disease.ui.fragments.WelcomeFragment"
+        android:label="Welcome"
+        tools:layout="@layout/fragment_welcome">
+        <action
+            android:id="@+id/action_welcomeFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Login -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.rubber.disease.ui.fragments.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Register -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.rubber.disease.ui.fragments.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <!-- Forgot Password -->
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.rubber.disease.ui.fragments.ForgotPasswordFragment"
+        android:label="Forgot Password"
+        tools:layout="@layout/fragment_forgot_password" />
+
+    <!-- Home Dashboard -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.rubber.disease.ui.fragments.HomeFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_galleryFragment"
+            app:destination="@id/galleryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatbotFragment"
+            app:destination="@id/chatbotFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_predictionFragment"
+            app:destination="@id/predictionFragment" />
+    </fragment>
+
+    <!-- Camera Screen -->
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.rubber.disease.ui.fragments.CameraFragment"
+        android:label="Camera"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_predictionFragment"
+            app:destination="@id/predictionFragment"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+
+    <!-- Gallery Upload Screen -->
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="com.rubber.disease.ui.fragments.GalleryFragment"
+        android:label="Gallery Upload"
+        tools:layout="@layout/fragment_gallery">
+        <action
+            android:id="@+id/action_galleryFragment_to_predictionFragment"
+            app:destination="@id/predictionFragment"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+
+    <!-- Prediction Screen -->
+    <fragment
+        android:id="@+id/predictionFragment"
+        android:name="com.rubber.disease.ui.fragments.PredictionFragment"
+        android:label="Prediction"
+        tools:layout="@layout/fragment_prediction">
+        <argument
+            android:name="imagePath"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_predictionFragment_to_severityFragment"
+            app:destination="@id/severityFragment" />
+        <action
+            android:id="@+id/action_predictionFragment_to_gradCamFragment"
+            app:destination="@id/gradCamFragment" />
+        <action
+            android:id="@+id/action_predictionFragment_to_recommendationFragment"
+            app:destination="@id/recommendationFragment" />
+        <action
+            android:id="@+id/action_predictionFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- Severity Analysis Screen -->
+    <fragment
+        android:id="@+id/severityFragment"
+        android:name="com.rubber.disease.ui.fragments.SeverityFragment"
+        android:label="Severity Analysis"
+        tools:layout="@layout/fragment_severity">
+        <argument
+            android:name="imagePath"
+            app:argType="string" />
+        <argument
+            android:name="isHealthy"
+            app:argType="boolean" />
+    </fragment>
+
+    <!-- Grad-CAM Visualization Screen -->
+    <fragment
+        android:id="@+id/gradCamFragment"
+        android:name="com.rubber.disease.ui.fragments.GradCamFragment"
+        android:label="Grad-CAM"
+        tools:layout="@layout/fragment_gradcam">
+        <argument
+            android:name="imagePath"
+            app:argType="string" />
+    </fragment>
+
+    <!-- Recommendation Screen -->
+    <fragment
+        android:id="@+id/recommendationFragment"
+        android:name="com.rubber.disease.ui.fragments.RecommendationFragment"
+        android:label="Recommendations"
+        tools:layout="@layout/fragment_recommendation">
+        <argument
+            android:name="diseaseName"
+            app:argType="string" />
+    </fragment>
+
+    <!-- History Screen -->
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.rubber.disease.ui.fragments.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history">
+        <action
+            android:id="@+id/action_historyFragment_to_predictionFragment"
+            app:destination="@id/predictionFragment" />
+    </fragment>
+
+    <!-- Farmer Profile -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.rubber.disease.ui.fragments.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <!-- Settings -->
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.rubber.disease.ui.fragments.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_helpFaqFragment"
+            app:destination="@id/helpFaqFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_contactExpertFragment"
+            app:destination="@id/contactExpertFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- AI Chatbot -->
+    <fragment
+        android:id="@+id/chatbotFragment"
+        android:name="com.rubber.disease.ui.fragments.ChatbotFragment"
+        android:label="Chatbot"
+        tools:layout="@layout/fragment_chatbot" />
+
+    <!-- About Project -->
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.rubber.disease.ui.fragments.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+
+    <!-- Help & FAQ -->
+    <fragment
+        android:id="@+id/helpFaqFragment"
+        android:name="com.rubber.disease.ui.fragments.HelpFaqFragment"
+        android:label="FAQ"
+        tools:layout="@layout/fragment_help_faq" />
+
+    <!-- Contact Expert -->
+    <fragment
+        android:id="@+id/contactExpertFragment"
+        android:name="com.rubber.disease.ui.fragments.ContactExpertFragment"
+        android:label="Expert Contact"
+        tools:layout="@layout/fragment_contact_expert" />
+
+</navigation>

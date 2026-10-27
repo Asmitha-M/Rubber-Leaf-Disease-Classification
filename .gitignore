@@ -1,0 +1,37 @@
+# Gradle & Android Build Outputs
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+*.ap_
+
+# Local Environment & Secrets
+local.properties
+.idea/
+*.iml
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Python & Streamlit
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.streamlit/secrets.toml
+
+# OS & Temp
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+scratch_test_blur.py
+scratch_leaf_crop.jpg
+test_annotated_result.jpg
+user_screen_crop.jpg

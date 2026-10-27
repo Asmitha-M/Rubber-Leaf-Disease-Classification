@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#81C784</color>
+    <color name="primary_variant">#1B5E20</color>
+    <color name="on_primary">#00390a</color>
+    
+    <color name="secondary">#A9DFBF</color>
+    <color name="secondary_variant">#27AE60</color>
+    <color name="on_secondary">#000000</color>
+    
+    <color name="background">#121412</color>
+    <color name="on_background">#E2E3E2</color>
+    
+    <color name="surface">#1E201E</color>
+    <color name="on_surface">#E2E3E2</color>
+    <color name="surface_variant">#434843</color>
+    <color name="on_surface_variant">#C2C7C2</color>
+    
+    <color name="outline">#8D938D</color>
+    
+    <color name="error">#FFB4AB</color>
+    <color name="on_error">#690005</color>
+    
+    <!-- Keep severity colors distinct but slightly adjusted for dark theme -->
+    <color name="severity_healthy">#81C784</color>
+    <color name="severity_mild">#FFF59D</color>
+    <color name="severity_moderate">#FFCC80</color>
+    <color name="severity_severe">#EF9A9A</color>
+    
+    <color name="dark_gray">#CCCCCC</color>
+    <color name="light_gray">#333333</color>
+</resources>
