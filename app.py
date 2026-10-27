@@ -20,10 +20,10 @@ from reportlab.lib import colors
 # Page Configuration & Constants
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="RubberGuard - Rubber Leaf Disease Diagnostics",
+    page_title="RubberGuard - Mobile AI Disease Diagnosis",
     page_icon="🍃",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "app", "src", "main", "assets")
@@ -1093,119 +1093,388 @@ def get_chatbot_reply(user_msg, last_scan_disease, last_scan_severity, is_kannad
                 "• Rubber Board helpline: 1800-425-5522")
 
 # ---------------------------------------------------------
-# Streamlit Application Layout
+# Streamlit Mobile Application Layout (Matching Android Phone UI)
 # ---------------------------------------------------------
-# Sidebar
-with st.sidebar:
-    st.image("https://img.icons8.com/color/96/natural-food.png", width=64)
-    st.title("RubberGuard AI")
-    st.caption("On-Device MobileNetV2 + OpenCV Diagnostic Platform")
-    st.markdown("---")
-    
-    language = st.radio("Language / ಭಾಷೆ:", ["English", "ಕನ್ನಡ (Kannada)"], index=0)
-    is_kannada = "ಕನ್ನಡ" in language
-    
-    st.markdown("---")
-    st.subheader("Model Specifications" if not is_kannada else "ಮಾಡೆಲ್ ವಿವರಗಳು")
+
+# Initialize Session State
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "🏠 Dashboard"
+if "scan_source" not in st.session_state:
+    st.session_state.scan_source = "📷 Camera"
+if "total_scans" not in st.session_state:
+    st.session_state.total_scans = 0
+if "diseased_scans" not in st.session_state:
+    st.session_state.diseased_scans = 0
+if "healthy_scans" not in st.session_state:
+    st.session_state.healthy_scans = 0
+if "selected_lang" not in st.session_state:
+    st.session_state.selected_lang = "English"
+
+# Mobile App Material 3 Styling (Matching Android UI)
+st.markdown("""
+<style>
+/* Hide default Streamlit chrome */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+.stDeployButton {display:none;}
+
+/* Global fonts & background */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+html, body, [class*="css"] {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #F4F7F4 !important;
+}
+
+/* Mobile-first centered phone viewport container */
+.main .block-container {
+    max-width: 580px !important;
+    padding-top: 0.8rem !important;
+    padding-bottom: 3rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    margin: 0 auto !important;
+}
+
+/* Android App Bar Header */
+.mobile-appbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 14px;
+    border: 1px solid #E8F5E9;
+}
+.brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.brand-logo {
+    font-size: 26px;
+    line-height: 1;
+}
+.brand-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1B5E20;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+.brand-subtitle {
+    font-size: 11px;
+    color: #66BB6A;
+    font-weight: 600;
+}
+
+/* Farmer Greeting */
+.farmer-greeting-box {
+    padding: 4px 6px 12px 6px;
+}
+.farmer-hello {
+    font-size: 13px;
+    color: #558B2F;
+    font-weight: 600;
+}
+.farmer-headline {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1B5E20;
+    line-height: 1.2;
+}
+
+/* Hero Gradient Card (matching Android dashboard_card_gradient.xml) */
+.hero-scan-card {
+    background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 55%, #388E3C 100%);
+    border-radius: 22px;
+    padding: 22px 20px;
+    color: #FFFFFF;
+    box-shadow: 0 8px 24px rgba(27, 94, 32, 0.28);
+    margin-bottom: 16px;
+}
+.hero-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+.hero-desc {
+    font-size: 13px;
+    color: #E8F5E9;
+    line-height: 1.45;
+    margin-bottom: 0px;
+}
+
+/* Statistics Card (matching Android fragment_home.xml) */
+.stats-card-box {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.05);
+    border: 1px solid #E0E0E0;
+    margin-bottom: 16px;
+}
+.stats-header {
+    font-size: 15px;
+    font-weight: 700;
+    color: #212121;
+    margin-bottom: 12px;
+}
+.stat-num-total {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1B5E20;
+}
+.stat-num-diseased {
+    font-size: 24px;
+    font-weight: 800;
+    color: #D32F2F;
+}
+.stat-num-healthy {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2E7D32;
+}
+.stat-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: #757575;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Diagnosis Status Badges */
+.badge-diseased {
+    display: inline-block;
+    background: #FFEBEE;
+    color: #C62828;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #FFCDD2;
+    letter-spacing: 0.5px;
+}
+.badge-healthy {
+    display: inline-block;
+    background: #E8F5E9;
+    color: #2E7D32;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #C8E6C9;
+    letter-spacing: 0.5px;
+}
+
+/* Prediction Cards */
+.prediction-main-card {
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    border: 1px solid #E8F5E9;
+    margin-bottom: 16px;
+}
+.prediction-disease-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1B5E20;
+    margin-top: 6px;
+    margin-bottom: 2px;
+}
+
+/* Buttons */
+.stButton > button {
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    padding: 0.55rem 1rem !important;
+    transition: all 0.2s ease-in-out !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------------------
+# Mobile App Bar Header
+# ---------------------------------------------------------
+c_top1, c_top2 = st.columns([3, 2])
+with c_top1:
     st.markdown("""
-    - **Architecture**: MobileNetV2
-    - **Classes**: 9 Categories (8 diseases + Background)
-    - **Input Resolution**: 224 × 224 × 3
-    - **Explainability**: On-Device Grad-CAM
-    - **Severity Estimation**: HSV Multi-thresholding
-    """)
-    st.markdown("---")
-    st.info("📞 **Rubber Board Helpline:**\n1800-425-5522\n\nOffice: Mangaluru / Puttur, Karnataka" if not is_kannada else "📞 **ರಬ್ಬರ್ ಬೋರ್ಡ್ ಸಹಾಯವಾಣಿ:**\n1800-425-5522\n\nಕಚೇರಿ: ಮಂಗಳೂರು / ಪುತ್ತೂರು, ಕರ್ನಾಟಕ")
+    <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:26px;">🍃</span>
+        <div>
+            <div style="font-size:20px; font-weight:800; color:#1B5E20; line-height:1.1;">RubberGuard</div>
+            <div style="font-size:11px; color:#66BB6A; font-weight:600;">Mobile AI Diagnostic System</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Main Header
-st.title("🍃 Rubber Leaf Disease Diagnosis & Advisory System" if not is_kannada else "🍃 ರಬ್ಬರ್ ಎಲೆ ರೋಗ ಪತ್ತೆ ಮತ್ತು ಕೃಷಿ ಸಲಹಾ ವ್ಯವಸ್ಥೆ")
-st.markdown("Automated leaf segmentation, quality validation, deep learning classification, and actionable treatments for rubber plantation growers in Karnataka." if not is_kannada else "ಕರ್ನಾಟಕದ ರಬ್ಬರ್ ಬೆಳೆಗಾರರಿಗೆ ನೈಜ-ಸಮಯದ ಎಲೆ ರೋಗ ಪತ್ತೆ, ಗಂಭೀರತೆ ಮಾಪನ ಮತ್ತು ಪರಿಹಾರ ಕ್ರಮಗಳ ವ್ಯವಸ್ಥೆ.")
+with c_top2:
+    selected_lang = st.selectbox(
+        "Language",
+        ["English", "ಕನ್ನಡ (Kannada)"],
+        index=0 if st.session_state.selected_lang == "English" else 1,
+        label_visibility="collapsed"
+    )
+    st.session_state.selected_lang = selected_lang
 
-tab_diagnose, tab_chat, tab_kb, tab_pipeline = st.tabs([
-    "🔬 Leaf Diagnosis" if not is_kannada else "🔬 ಎಲೆ ತಪಾಸಣೆ",
-    "🤖 AI Farm Assistant" if not is_kannada else "🤖 ಕೃಷಿ ಸಹಾಯ ಚಾಟ್‌ಬಾಟ್",
-    "📚 Disease Library" if not is_kannada else "📚 ರೋಗ ಮಾಹಿತಿ ಕೋಶ",
-    "⚙️ System Pipeline" if not is_kannada else "⚙️ ತಾಂತ್ರಿಕ ಪ್ರಕ್ರಿಯೆ"
-])
+is_kannada = "ಕನ್ನಡ" in st.session_state.selected_lang
 
 # ---------------------------------------------------------
-# Tab 1: Leaf Diagnosis
+# Mobile Navigation Segmented Bar (Home, Scan, Chatbot, Guide)
 # ---------------------------------------------------------
-with tab_diagnose:
-    st.markdown("### Step 1: Upload or Capture Rubber Leaf Photo" if not is_kannada else "### ಹಂತ 1: ರಬ್ಬರ್ ಎಲೆಯ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಅಥವಾ ಸೆರೆಹಿಡಿಯಿರಿ")
+nav_tabs = ["🏠 Dashboard", "🔬 Scan Leaf", "🤖 Farm Doctor", "📚 Disease Library"] if not is_kannada else ["🏠 ಮುಖಪುಟ", "🔬 ಎಲೆ ತಪಾಸಣೆ", "🤖 ಕೃಷಿ ವೈದ್ಯ", "📚 ರೋಗ ಕೋಶ"]
+
+nav_cols = st.columns(4)
+for i, tab_name in enumerate(nav_tabs):
+    with nav_cols[i]:
+        is_active = (i == 0 and "Dashboard" in st.session_state.active_tab or "ಮುಖಪುಟ" in st.session_state.active_tab) or \
+                    (i == 1 and "Scan" in st.session_state.active_tab or "ತಪಾಸಣೆ" in st.session_state.active_tab) or \
+                    (i == 2 and "Doctor" in st.session_state.active_tab or "ವೈದ್ಯ" in st.session_state.active_tab) or \
+                    (i == 3 and "Library" in st.session_state.active_tab or "ಕೋಶ" in st.session_state.active_tab)
+        
+        btn_type = "primary" if is_active else "secondary"
+        if st.button(tab_name.split()[0], key=f"nav_btn_{i}", type=btn_type, use_container_width=True, help=tab_name):
+            st.session_state.active_tab = tab_name
+            st.rerun()
+
+st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
+
+# =========================================================
+# VIEW 1: DASHBOARD (Matching fragment_home.xml)
+# =========================================================
+if "Dashboard" in st.session_state.active_tab or "ಮುಖಪುಟ" in st.session_state.active_tab:
+    # Farmer Greeting
+    st.markdown(f"""
+    <div class="farmer-greeting-box">
+        <div class="farmer-hello">{"Good Day, Farmer 👋" if not is_kannada else "ನಮಸ್ಕಾರ, ರೈತ ಮಿತ್ರರೇ 👋"}</div>
+        <div class="farmer-headline">{"Plantation Health Monitor" if not is_kannada else "ತೋಟದ ರೋಗ ತಪಾಸಣಾ ವ್ಯವಸ್ಥೆ"}</div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    col_input1, col_input2 = st.columns(2)
-    with col_input1:
-        upload_mode = st.radio(
-            "Select Input Source:" if not is_kannada else "ಚಿತ್ರದ ಮೂಲವನ್ನು ಆಯ್ಕೆಮಾಡಿ:",
-            ["📁 Upload from Gallery / Storage", "📷 Take Photo with Camera"],
-            horizontal=True
-        )
+    # Hero Scan Card (matching Android gradient card)
+    st.markdown(f"""
+    <div class="hero-scan-card">
+        <div class="hero-title">{"Instant Leaf Disease Scan" if not is_kannada else "ತಕ್ಷಣದ ಎಲೆ ರೋಗ ತಪಾಸಣೆ"}</div>
+        <div class="hero-desc">{"AI camera analyzes fungal infections, highlights affected tissue with Grad-CAM, and estimates disease severity percentage." if not is_kannada else "ಕ್ಯಾಮರಾದಿಂದ ಎಲೆಯನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ, ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಮೂಲಕ ರೋಗ ಪತ್ತೆಹಚ್ಚಿ ಮತ್ತು ನಿಖರ ಚಿಕಿತ್ಸೆ ಪಡೆಯಿರಿ."}</div>
+    </div>
+    """, unsafe_allow_html=True)
     
+    c_btn1, c_btn2 = st.columns(2)
+    with c_btn1:
+        if st.button("📷 " + ("Take Photo" if not is_kannada else "ಕ್ಯಾಮರಾ ಫೋಟೋ"), type="primary", use_container_width=True):
+            st.session_state.scan_source = "📷 Camera"
+            st.session_state.active_tab = "🔬 Scan Leaf" if not is_kannada else "🔬 ಎಲೆ ತಪಾಸಣೆ"
+            st.rerun()
+    with c_btn2:
+        if st.button("📁 " + ("Upload Leaf" if not is_kannada else "ಚಿತ್ರ ಅಪ್‌ಲೋಡ್"), use_container_width=True):
+            st.session_state.scan_source = "📁 Upload from Gallery"
+            st.session_state.active_tab = "🔬 Scan Leaf" if not is_kannada else "🔬 ಎಲೆ ತಪಾಸಣೆ"
+            st.rerun()
+
+    st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
+
+    # Statistics Card (matching Android stats counters)
+    st.markdown(f"""
+    <div class="stats-card-box">
+        <div class="stats-header">{"Plantation Diagnostic Summary" if not is_kannada else "ತಪಾಸಣಾ ವರದಿ ವಿವರ"}</div>
+        <div style="display:flex; justify-content:space-around; align-items:center;">
+            <div class="stat-item">
+                <div class="stat-num-total">{st.session_state.total_scans}</div>
+                <div class="stat-lbl">{"Total Scans" if not is_kannada else "ಒಟ್ಟು ತಪಾಸಣೆ"}</div>
+            </div>
+            <div style="width:1px; height:36px; background:#E0E0E0;"></div>
+            <div class="stat-item">
+                <div class="stat-num-diseased">{st.session_state.diseased_scans}</div>
+                <div class="stat-lbl">{"Diseased" if not is_kannada else "ರೋಗ ಬಾಧಿತ"}</div>
+            </div>
+            <div style="width:1px; height:36px; background:#E0E0E0;"></div>
+            <div class="stat-item">
+                <div class="stat-num-healthy">{st.session_state.healthy_scans}</div>
+                <div class="stat-lbl">{"Healthy" if not is_kannada else "ಆರೋಗ್ಯಕರ"}</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Quick Advisory Links
+    st.markdown(f"#### {'Quick Farmer Services' if not is_kannada else 'ತ್ವರಿತ ಕೃಷಿ ಸೇವೆಗಳು'}")
+    c_q1, c_q2 = st.columns(2)
+    with c_q1:
+        if st.button("🤖 " + ("AI Farm Doctor" if not is_kannada else "ಕೃಷಿ ಸಹಾಯ ಚಾಟ್"), use_container_width=True):
+            st.session_state.active_tab = "🤖 Farm Doctor" if not is_kannada else "🤖 ಕೃಷಿ ವೈದ್ಯ"
+            st.rerun()
+        if st.button("🧪 " + ("1% Bordeaux Guide" if not is_kannada else "1% ಬೋರ್ಡೋ ದ್ರಾವಣ"), use_container_width=True):
+            st.session_state.active_tab = "🤖 Farm Doctor" if not is_kannada else "🤖 ಕೃಷಿ ವೈದ್ಯ"
+            st.session_state.chat_messages = [
+                {"role": "user", "content": "How to prepare 1% Bordeaux mixture?" if not is_kannada else "1% ಬೋರ್ಡೋ ಮಿಶ್ರಣ ತಯಾರಿಸುವ ವಿಧಾನ ಹೇಗೆ?"},
+                {"role": "assistant", "content": get_chatbot_reply("bordeaux", None, None, is_kannada)}
+            ]
+            st.rerun()
+    with c_q2:
+        if st.button("📚 " + ("Disease Library" if not is_kannada else "ರೋಗಗಳ ಮಾಹಿತಿ"), use_container_width=True):
+            st.session_state.active_tab = "📚 Disease Library" if not is_kannada else "📚 ರೋಗ ಕೋಶ"
+            st.rerun()
+        if st.button("📞 " + ("Rubber Board Helpline" if not is_kannada else "ಸಹಾಯವಾಣಿ ಸಂಪರ್ಕ"), use_container_width=True):
+            st.info("📞 **Rubber Board Toll-Free Helpline:**\n1800-425-5522\n\nOffices: Mangaluru, Puttur, Belthangady, Sullia, Shivamogga." if not is_kannada else "📞 **ರಬ್ಬರ್ ಬೋರ್ಡ್ ಸಹಾಯವಾಣಿ:**\n1800-425-5522\n\nಕಚೇರಿಗಳು: ಮಂಗಳೂರು, ಪುತ್ತೂರು, ಬೆಳ್ತಂಗಡಿ, ಸುಳ್ಯ, ಶಿವಮೊಗ್ಗ.")
+
+# =========================================================
+# VIEW 2: SCAN & PREDICTION (Matching fragment_prediction.xml)
+# =========================================================
+elif "Scan" in st.session_state.active_tab or "ತಪಾಸಣೆ" in st.session_state.active_tab:
+    st.markdown(f"""
+    <div style="margin-bottom:12px;">
+        <div style="font-size:18px; font-weight:800; color:#1B5E20;">{"Rubber Leaf Diagnostic Scan" if not is_kannada else "ರಬ್ಬರ್ ಎಲೆ ರೋಗ ತಪಾಸಣೆ"}</div>
+        <div style="font-size:12px; color:#616161;">{"Capture or upload a single rubber leaf for real-time MobileNetV2 inference." if not is_kannada else "ಸ್ಪಷ್ಟವಾದ ಎಲೆಯ ಫೋಟೋ ತೆಗೆಯಿರಿ ಅಥವಾ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ."}</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Input Selector Pills
+    c_src1, c_src2 = st.columns(2)
+    with c_src1:
+        if st.button("📷 " + ("Live Camera" if not is_kannada else "ಕ್ಯಾಮರಾ"), type="primary" if "Camera" in st.session_state.scan_source else "secondary", use_container_width=True):
+            st.session_state.scan_source = "📷 Camera"
+            st.rerun()
+    with c_src2:
+        if st.button("📁 " + ("Upload Photo" if not is_kannada else "ಅಪ್‌ಲೋಡ್"), type="primary" if "Upload" in st.session_state.scan_source else "secondary", use_container_width=True):
+            st.session_state.scan_source = "📁 Upload from Gallery"
+            st.rerun()
+            
     uploaded_image = None
-    if "Upload" in upload_mode:
-        file = st.file_uploader(
-            "Choose a leaf image (JPG, JPEG, PNG)" if not is_kannada else "ಎಲೆಯ ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-            type=["jpg", "jpeg", "png"]
-        )
-        if file is not None:
-            uploaded_image = Image.open(file).convert("RGB")
+    if "Camera" in st.session_state.scan_source:
+        cam_file = st.camera_input("Take photo of leaf", label_visibility="collapsed")
+        if cam_file is not None:
+            uploaded_image = Image.open(cam_file).convert("RGB")
     else:
-        camera_file = st.camera_input("Capture leaf image" if not is_kannada else "ಕ್ಯಾಮರಾದಿಂದ ಫೋಟೋ ತೆಗೆಯಿರಿ")
-        if camera_file is not None:
-            uploaded_image = Image.open(camera_file).convert("RGB")
+        file_input = st.file_uploader("Select leaf image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+        if file_input is not None:
+            uploaded_image = Image.open(file_input).convert("RGB")
             
     if uploaded_image is not None:
         raw_np = np.array(uploaded_image)
         
-        st.markdown("---")
-        st.markdown("### Step 2: Computer Vision Preprocessing & Quality Validation" if not is_kannada else "### ಹಂತ 2: ಕಂಪ್ಯೂಟರ್ ವಿಷನ್ ಪ್ರಕ್ರಿಯೆ ಮತ್ತು ಗುಣಮಟ್ಟ ಪರಿಶೀಲನೆ")
-        
-        with st.spinner("Running OpenCV leaf extraction and illumination correction..." if not is_kannada else "ಚಿತ್ರ ಸಂಸ್ಕರಣೆ ನಡೆಯುತ್ತಿದೆ..."):
+        with st.spinner("Processing leaf with OpenCV and neural network..." if not is_kannada else "ಎಲೆಯ ತಪಾಸಣೆ ನಡೆಯುತ್ತಿದೆ..."):
             prep_224, segmented_img, val_metrics = preprocess_and_validate(raw_np)
             
         if not val_metrics["passed"]:
-            st.error(f"⚠️ **Image Validation Failed:** {val_metrics['error']}" if not is_kannada else f"⚠️ **ಚಿತ್ರ ಪರಿಶೀಲನೆ ವಿಫಲವಾಗಿದೆ:** {val_metrics['error']}")
-            
-            c_val1, c_val2, c_val3 = st.columns(3)
-            with c_val1:
-                st.metric("Leaf Coverage" if not is_kannada else "ಎಲೆಯ ವ್ಯಾಪ್ತಿ", f"{val_metrics.get('leaf_ratio', 0):.1f}%", help="Must be >= 40%")
-            with c_val2:
-                st.metric("Focus Sharpness" if not is_kannada else "ತೀಕ್ಷ್ಣತೆ (Focus)", f"{val_metrics.get('laplacian_var', 0):.1f}", help="Laplacian variance must be >= 30.0")
-            with c_val3:
-                st.metric("Luminance Exposure" if not is_kannada else "ಬೆಳಕಿನ ಮಟ್ಟ", f"{val_metrics.get('mean_luminance', 0):.1f}", help="Luminance must be between 45 and 225")
-                
-            st.info("💡 **Tips for best results:** Capture a single leaf close-up against a clean background with steady hands and clear lighting." if not is_kannada else "💡 **ಉತ್ತಮ ಫಲಿತಾಂಶಕ್ಕಾಗಿ ಸಲಹೆ:** ಎಲೆಯನ್ನು ಹತ್ತಿರದಿಂದ ಸ್ಪಷ್ಟವಾಗಿ ಹಿಡಿದು, ಸರಿಯಾದ ಬೆಳಕಿನಲ್ಲಿ ಫೋಟೋ ತೆಗೆಯಿರಿ.")
+            st.error(f"⚠️ {val_metrics['error']}")
         else:
-            # Display Image Pipeline Side-by-Side
-            c1, c2, c3 = st.columns(3)
-            with c1:
-                st.image(raw_np, caption="1. Original Capture" if not is_kannada else "1. ಮೂಲ ಚಿತ್ರ", use_container_width=True)
-            with c2:
-                st.image(segmented_img, caption="2. Segmented Leaf (No Clutter)" if not is_kannada else "2. ಹಿನ್ನೆಲೆ ರಹಿತ ಎಲೆ", use_container_width=True)
-            with c3:
-                st.image(prep_224, caption="3. CLAHE Enhanced (224×224)" if not is_kannada else "3. ಸಂಸ್ಕರಿಸಿದ ಎಲೆ (224×224)", use_container_width=True)
-                
-            # Run Inference
-            st.markdown("---")
-            st.markdown("### Step 3: Disease Classification & Saliency Analysis" if not is_kannada else "### ಹಂತ 3: ರೋಗ ಪತ್ತೆ ಮತ್ತು ಫಲಿತಾಂಶ")
-            
             interpreter, weights = load_tflite_model()
             if interpreter is None:
-                st.error("TFLite model could not be loaded.")
+                st.error("TFLite model not loaded.")
             else:
                 input_details = interpreter.get_input_details()
                 output_details = interpreter.get_output_details()
                 
-                # Format input tensor
                 input_data = np.expand_dims(prep_224.astype(np.float32), axis=0)
                 interpreter.set_tensor(input_details[0]['index'], input_data)
                 
-                start_time = time.time()
+                t0 = time.time()
                 interpreter.invoke()
-                latency_ms = (time.time() - start_time) * 1000
+                latency_ms = (time.time() - t0) * 1000
                 
-                # Multi-output: Output 0 is Feature Map (1, 7, 7, 1280), Output 1 is Probabilities (1, 9)
                 feat_map = interpreter.get_tensor(output_details[0]['index'])
                 probs = interpreter.get_tensor(output_details[1]['index'])[0]
                 
@@ -1213,150 +1482,167 @@ with tab_diagnose:
                 confidence = float(probs[max_idx]) * 100.0
                 predicted_class = CLASSES[max_idx]
                 
-                # Severity estimation
                 is_healthy = predicted_class == "Healthy"
                 sev_pct, sev_label, sev_color = estimate_severity(raw_np, is_healthy)
                 
-                # Store in session state for chatbot
+                # Update Scan Counters
+                st.session_state.total_scans += 1
+                if is_healthy:
+                    st.session_state.healthy_scans += 1
+                else:
+                    st.session_state.diseased_scans += 1
+                    
                 st.session_state["last_scan_disease"] = predicted_class
                 st.session_state["last_scan_severity"] = f"{sev_label} ({sev_pct:.1f}%)"
                 
-                # Check for Background or Low Confidence (true out-of-distribution clutter)
+                # Check for background clutter or very low confidence
                 if predicted_class == "Background / Non-Rubber Leaf" or confidence < 35.0:
-                    if predicted_class == "Background / Non-Rubber Leaf":
-                        st.warning("⚠️ **Non-Rubber Leaf / Clutter Detected!**\nThe model detected a non-leaf background object (e.g. keyboard, text, desk). Please upload a clear photo of an authentic rubber leaf." if not is_kannada else "⚠️ **ಅಮಾನ್ಯ ಚಿತ್ರ ಪತ್ತೆಯಾಗಿದೆ!**\nಇದು ರಬ್ಬರ್ ಎಲೆಯಾಗಿ ಕಂಡುಬರುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ನೈಜ ರಬ್ಬರ್ ಎಲೆಯ ಫೋಟೋ ತೆಗೆಯಿರಿ.")
-                    else:
-                        st.warning(f"⚠️ **Prediction confidence is low ({confidence:.1f}% < 35%).** Please upload a clearer, properly lit rubber leaf image." if not is_kannada else f"⚠️ **ಖಚಿತತೆಯ ಮಟ್ಟ ಕಡಿಮೆಯಾಗಿದೆ ({confidence:.1f}%).** ದಯವಿಟ್ಟು ಸ್ಪಷ್ಟವಾದ ಎಲೆಯ ಫೋಟೋ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ.")
+                    st.warning("⚠️ **Non-Rubber Leaf / Clutter Detected!** Please photograph an authentic rubber leaf against a neutral background." if not is_kannada else "⚠️ **ಅಮಾನ್ಯ ಚಿತ್ರ!** ದಯವಿಟ್ಟು ನೈಜ ರಬ್ಬರ್ ಎಲೆಯ ಫೋಟೋ ತೆಗೆಯಿರಿ.")
                 else:
-                    if confidence < 70.0:
-                        st.info(f"ℹ️ **Notice: Image has mild blur / soft focus (Confidence: {confidence:.1f}%). Showing top predicted disease condition.**" if not is_kannada else f"ℹ️ **ಸೂಚನೆ: ಚಿತ್ರದಲ್ಲಿ ಸ್ವಲ್ಪ ಮಸುಕುತನವಿದೆ (ಖಚಿತತೆ: {confidence:.1f}%). ಸಂಭಾವ್ಯ ರೋಗದ ವಿವರಗಳನ್ನು ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ.**")
-                    # Result Cards
-                    col_r1, col_r2, col_r3, col_r4 = st.columns(4)
-                    with col_r1:
-                        st.metric("Detected Condition" if not is_kannada else "ಪತ್ತೆಯಾದ ರೋಗ", predicted_class)
-                    with col_r2:
-                        st.metric("Model Confidence" if not is_kannada else "ಖಚಿತತೆ (Confidence)", f"{confidence:.1f}%")
-                    with col_r3:
-                        st.metric("Visual Severity" if not is_kannada else "ತೀವ್ರತೆ (Severity)", f"{sev_label} ({sev_pct:.1f}%)")
-                    with col_r4:
-                        st.metric("Inference Time" if not is_kannada else "ಸಮಯ (Latency)", f"{latency_ms:.1f} ms")
-                        
-                    # Precision Color-Grounded Grad-CAM Heatmaps
-                    gradcam_leaf = generate_gradcam_overlay(feat_map, weights, max_idx, prep_224)
-                    gradcam_full = generate_gradcam_overlay(feat_map, weights, max_idx, raw_np, bbox=validation_metrics.get("bbox"))
+                    st.markdown("---")
                     
-                    st.markdown("#### Visual Explanation: Precision Grad-CAM" if not is_kannada else "#### ತಪಾಸಣಾ ನಕ್ಷೆ: ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್")
-                    c_gc1, c_gc2 = st.columns([1, 1])
+                    # Leaf Preview with Status Badge
+                    st.image(uploaded_image, use_container_width=True)
                     
-                    with c_gc1:
-                        view_mode = st.radio(
-                            "Select Visualization Layer:" if not is_kannada else "ನೋಟದ ಆಯ್ಕೆ:",
-                            ["🔥 Grad-CAM Heatmap (AI Attention)", "🌿 Original Capture"]
-                            if not is_kannada else
-                            ["🔥 ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್", "🌿 ಮೂಲ ಚಿತ್ರ"],
-                            horizontal=True
-                        )
-                        if "Grad-CAM" in view_mode or "ಗ್ರಾಡ್-ಕ್ಯಾಮ್" in view_mode:
-                            align_opt = st.radio(
-                                "Alignment:" if not is_kannada else "ಜೋಡಣೆ:",
-                                ["Segmented Leaf (224×224)", "Full Photo Overlay"] if not is_kannada else ["ಸಂಸ್ಕರಿಸಿದ ಎಲೆ (224×224)", "ಮೂಲ ಚಿತ್ರ"],
-                                horizontal=True,
-                                key="gc_align_radio"
-                            )
-                            displayed_cam = gradcam_leaf if ("Segmented" in align_opt or "ಸಂಸ್ಕರಿಸಿದ" in align_opt) else gradcam_full
-                            if displayed_cam is not None:
-                                st.image(displayed_cam, caption="Color-Grounded Grad-CAM (Pinpoints Exact Lesion Focus)" if not is_kannada else "ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ನಕ್ಷೆ (ರೋಗ ಲಕ್ಷಣಗಳ ನಿಖರ ಕೇಂದ್ರ ಬಿಂದು)", use_container_width=True)
-                            else:
-                                st.image(raw_np, caption="Grad-CAM not available", use_container_width=True)
+                    badge_html = f'<div class="badge-healthy">✅ {"HEALTHY LEAF" if not is_kannada else "ಆರೋಗ್ಯಕರ ಎಲೆ"}</div>' if is_healthy else f'<div class="badge-diseased">🚨 {"DISEASE DETECTED" if not is_kannada else "ರೋಗ ಬಾಧಿತ ಎಲೆ"}</div>'
+                    st.markdown(badge_html, unsafe_allow_html=True)
+                    
+                    # Diagnosis Main Card
+                    st.markdown(f"""
+                    <div class="prediction-main-card">
+                        <div style="font-size:12px; font-weight:700; color:#757575; text-transform:uppercase;">{"Detected Condition" if not is_kannada else "ಪತ್ತೆಯಾದ ರೋಗ"}</div>
+                        <div class="prediction-disease-name">{predicted_class}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                            <span style="font-size:14px; font-weight:700; color:#2E7D32;">{"Confidence:" if not is_kannada else "ಖಚಿತತೆ:"} {confidence:.1f}% {'(Soft Focus)' if 35.0 <= confidence < 70.0 else ''}</span>
+                            <span style="font-size:12px; color:#757575;">{latency_ms:.0f} ms</span>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Visual Severity Card
+                    if not is_healthy:
+                        st.markdown(f"""
+                        <div class="prediction-main-card" style="border-left: 5px solid {sev_color};">
+                            <div style="font-size:12px; font-weight:700; color:#757575; text-transform:uppercase;">{"Visual Severity" if not is_kannada else "ರೋಗದ ತೀವ್ರತೆ"}</div>
+                            <div style="font-size:20px; font-weight:800; color:{sev_color};">{sev_label} ({sev_pct:.1f}% area)</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    
+                    # Precision Grad-CAM Heatmap Viewer
+                    gradcam_full = generate_gradcam_overlay(feat_map, weights, max_idx, raw_np, bbox=val_metrics.get("bbox"))
+                    
+                    st.markdown(f"#### {'🔥 Grad-CAM Explainable AI Saliency' if not is_kannada else '🔥 ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್'}")
+                    cam_toggle = st.radio(
+                        "Layer:",
+                        ["🔥 Grad-CAM Heatmap", "🌿 Original Leaf"] if not is_kannada else ["🔥 ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ನಕ್ಷೆ", "🌿 ಮೂಲ ಎಲೆ"],
+                        horizontal=True,
+                        label_visibility="collapsed"
+                    )
+                    
+                    if "Heatmap" in cam_toggle or "ನಕ್ಷೆ" in cam_toggle:
+                        if gradcam_full is not None:
+                            st.image(gradcam_full, caption="Fiery crimson pinpointing verified fungal lesions (Healthy tissue = 0% alpha)" if not is_kannada else "ಶಿಲೀಂಧ್ರ ರೋಗದ ನಿಖರ ಜಾಗವನ್ನು ಗುರುತಿಸುವ ಹೀಟ್‌ಮ್ಯಾಪ್", use_container_width=True)
                         else:
-                            st.image(raw_np, caption="Original Capture" if not is_kannada else "ಮೂಲ ಚಿತ್ರ", use_container_width=True)
-                            
-                    with c_gc2:
-                        st.write("**Class Probability Distribution:**" if not is_kannada else "**ವರ್ಗವಾರು ಸಂಭವನೀಯತೆ ವಿವರ:**")
+                            st.image(raw_np, use_container_width=True)
+                    else:
+                        st.image(raw_np, caption="Original Capture", use_container_width=True)
+                        
+                    # Class Probability Distribution (Matching Android item_probability_row.xml)
+                    with st.expander("📊 " + ("View Class Probabilities" if not is_kannada else "ವರ್ಗವಾರು ಸಂಭವನೀಯತೆ ವಿವರ")):
                         for idx, cls_name in enumerate(CLASSES):
                             p = float(probs[idx]) * 100.0
-                            st.progress(p / 100.0, text=f"{cls_name}: {p:.1f}%")
+                            st.write(f"**{cls_name}** - `{p:.1f}%`")
+                            st.progress(p / 100.0)
                             
                     # Detailed Agronomic Recommendations
                     lang_key = "kn" if is_kannada else "en"
                     rec = RECOMMENDATIONS.get(predicted_class, {}).get(lang_key, None)
-                    
                     if rec:
-                        st.markdown("---")
-                        st.markdown(f"### 📋 Management Recommendations for {rec['name']}" if not is_kannada else f"### 📋 {rec['name']} ನಿರ್ವಹಣಾ ಶಿಫಾರಸುಗಳು")
-                        
-                        col_rec1, col_rec2 = st.columns(2)
-                        with col_rec1:
-                            st.markdown(f"**🔍 Symptoms & Identification:**\n\n{rec['symptoms']}" if not is_kannada else f"**🔍 ರೋಗ ಲಕ್ಷಣಗಳು:**\n\n{rec['symptoms']}")
-                            st.markdown(f"**🍀 Organic Treatment:**\n\n{rec['organic']}" if not is_kannada else f"**🍀 ಸಾವಯವ ಚಿಕಿತ್ಸೆ:**\n\n{rec['organic']}")
-                            st.markdown(f"**🌾 Fertilizer Schedule:**\n\n{rec['fertilizer']}" if not is_kannada else f"**🌾 ಪೋಷಕಾಂಶ ಮತ್ತು ಗೊಬ್ಬರ:**\n\n{rec['fertilizer']}")
-                        with col_rec2:
-                            st.markdown(f"**⚠️ Favorable Conditions / Causes:**\n\n{rec['causes']}" if not is_kannada else f"**⚠️ ರೋಗದ ಕಾರಣಗಳು:**\n\n{rec['causes']}")
-                            st.markdown(f"**🧪 Chemical Fungicide Spray:**\n\n{rec['chemical']}" if not is_kannada else f"**🧪 ಶಿಫಾರಸು ಮಾಡಿದ ಶಿಲೀಂಧ್ರನಾಶಕ:**\n\n{rec['chemical']}")
-                            st.markdown(f"**🛡️ Preventive Cultural Measures:**\n\n{rec['prevention']}" if not is_kannada else f"**🛡️ ಮುನ್ನೆಚ್ಚರಿಕೆ ಕ್ರಮಗಳು:**\n\n{rec['prevention']}")
+                        with st.expander("🍀 " + ("Treatment & Agronomic Advisory" if not is_kannada else "ಕೃಷಿ ಪರಿಹಾರ ಮತ್ತು ಸಿಂಪಡಣೆ ವಿವರ"), expanded=True):
+                            st.markdown(f"**🔍 Symptoms:** {rec['symptoms']}" if not is_kannada else f"**🔍 ಲಕ್ಷಣಗಳು:** {rec['symptoms']}")
+                            st.markdown(f"**🍀 Organic Treatment:** {rec['organic']}" if not is_kannada else f"**🍀 ಸಾವಯವ ಪರಿಹಾರ:** {rec['organic']}")
+                            st.markdown(f"**🧪 Chemical Fungicide:** {rec['chemical']}" if not is_kannada else f"**🧪 ಶಿಲೀಂಧ್ರನಾಶಕ:** {rec['chemical']}")
+                            st.markdown(f"**🌾 Fertilizer:** {rec['fertilizer']}" if not is_kannada else f"**🌾 ರಸಗೊಬ್ಬರ:** {rec['fertilizer']}")
+                            st.markdown(f"**⏱️ Recovery Time:** {rec['recovery']}" if not is_kannada else f"**⏱️ ಚೇತರಿಕೆ ಕಾಲ:** {rec['recovery']}")
                             
-                        # Download PDF Report Button
-                        st.markdown("---")
-                        c_pdf1, c_pdf2 = st.columns([2, 1])
-                        with c_pdf1:
-                            farmer_name_input = st.text_input("Enter Farmer Name / Plot Number for the Report:" if not is_kannada else "ವರದಿಗಾಗಿ ರೈತರ ಹೆಸರು / ಜಮೀನಿನ ವಿವರ ನಮೂದಿಸಿ:", value="Karnataka Rubber Grower")
-                        with c_pdf2:
-                            st.write("")
-                            st.write("")
-                            overlay_source = displayed_cam if displayed_cam is not None else raw_np
-                            overlay_pil = Image.fromarray(overlay_source)
-                            pdf_buf = generate_pdf_report(
-                                farmer_name=farmer_name_input,
-                                disease_name=predicted_class,
-                                confidence=confidence,
-                                severity_label=sev_label,
-                                severity_pct=sev_pct,
-                                rec=rec,
-                                original_pil=uploaded_image,
-                                heatmap_pil=overlay_pil,
-                                lang=lang_key
-                            )
-                            st.download_button(
-                                label="📥 Download PDF Diagnostic Report" if not is_kannada else "📥 ಪಿಡಿಎಫ್ ವರದಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
-                                data=pdf_buf,
-                                file_name=f"RubberGuard_Report_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
-                                mime="application/pdf"
-                            )
+                        # Download PDF Report
+                        pdf_buf = generate_pdf_report(
+                            farmer_name="Karnataka Rubber Grower",
+                            disease_name=predicted_class,
+                            confidence=confidence,
+                            severity_label=sev_label,
+                            severity_pct=sev_pct,
+                            rec=rec,
+                            original_pil=uploaded_image,
+                            heatmap_pil=Image.fromarray(gradcam_full if gradcam_full is not None else raw_np),
+                            lang=lang_key
+                        )
+                        st.download_button(
+                            label="📄 " + ("Download PDF Diagnostic Report" if not is_kannada else "ಪಿಡಿಎಫ್ ವರದಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ"),
+                            data=pdf_buf,
+                            file_name=f"RubberGuard_{predicted_class.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
 
-# ---------------------------------------------------------
-# Tab 2: AI Farm Assistant Chatbot
-# ---------------------------------------------------------
-with tab_chat:
-    st.markdown("### 🤖 Bilingual Agricultural Assistant" if not is_kannada else "### 🤖 ರಬ್ಬರ್ ಕೃಷಿ ಸಹಾಯ ಚಾಟ್‌ಬಾಟ್")
-    st.caption("Ask questions about leaf diseases, symptoms, chemical & organic fungicides, tapping methods, or Bordeaux mixture." if not is_kannada else "ರಬ್ಬರ್ ಎಲೆ ರೋಗಗಳು, ಗೊಬ್ಬರ, ಟ್ಯಾಪಿಂಗ್ ವಿಧಾನ ಅಥವಾ ಬೋರ್ಡೋ ಮಿಶ್ರಣದ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ.")
+# =========================================================
+# VIEW 3: AI CHATBOT (Matching fragment_chatbot.xml)
+# =========================================================
+elif "Doctor" in st.session_state.active_tab or "ವೈದ್ಯ" in st.session_state.active_tab:
+    st.markdown(f"""
+    <div style="margin-bottom:12px;">
+        <div style="font-size:18px; font-weight:800; color:#1B5E20;">{"AI Farm Assistant & Doctor" if not is_kannada else "ಕೃಷಿ ಸಹಾಯ ಚಾಟ್‌ಬಾಟ್"}</div>
+        <div style="font-size:12px; color:#616161;">{"Ask questions about rubber diseases, tapping schedules, Bordeaux mixture, or clones." if not is_kannada else "ರಬ್ಬರ್ ರೋಗಗಳು, ಗೊಬ್ಬರ ಅಥವಾ ಬೋರ್ಡೋ ಮಿಶ್ರಣದ ಬಗ್ಗೆ ಪ್ರಶ್ನೆ ಕೇಳಿ."}</div>
+    </div>
+    """, unsafe_allow_html=True)
     
+    # Quick Chip Suggestions
+    st.markdown("<div style='font-size:12px; font-weight:700; color:#757575; margin-bottom:6px;'>Quick Topics:</div>", unsafe_allow_html=True)
+    c_chip1, c_chip2 = st.columns(2)
+    with c_chip1:
+        if st.button("🧪 1% Bordeaux Mixture", use_container_width=True):
+            st.session_state.chat_messages = [
+                {"role": "user", "content": "How to prepare 1% Bordeaux mixture?" if not is_kannada else "1% ಬೋರ್ಡೋ ಮಿಶ್ರಣ ತಯಾರಿಸುವ ವಿಧಾನ?"},
+                {"role": "assistant", "content": get_chatbot_reply("bordeaux", None, None, is_kannada)}
+            ]
+            st.rerun()
+    with c_chip2:
+        if st.button("🔪 Rubber Tapping Rules", use_container_width=True):
+            st.session_state.chat_messages = [
+                {"role": "user", "content": "Rubber tapping timing, depth and slope" if not is_kannada else "ರಬ್ಬರ್ ಟ್ಯಾಪಿಂಗ್ ನಿಯಮಗಳು"},
+                {"role": "assistant", "content": get_chatbot_reply("tapping", None, None, is_kannada)}
+            ]
+            st.rerun()
+
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = [
-            {"role": "assistant", "content": "Hello! I am your RubberGuard AI Assistant. How can I assist you with your rubber trees today?" if not is_kannada else "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ ರಬ್ಬರ್ ಗಾರ್ಡ್ ಕೃಷಿ ಸಹಾಯ ಚಾಟ್‌ಬಾಟ್. ನಿಮ್ಮ ರಬ್ಬರ್ ಮರಗಳ ರೋಗ, ಚಿಕಿತ್ಸೆ ಅಥವಾ ಗೊಬ್ಬರದ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ."}
+            {"role": "assistant", "content": "Hello! I am your RubberGuard AI Assistant. How can I help your plantation today?" if not is_kannada else "ನಮಸ್ಕಾರ! ನಾನು ರಬ್ಬರ್ ಗಾರ್ಡ್ ಸಹಾಯ ಚಾಟ್‌ಬಾಟ್. ನಿಮ್ಮ ರಬ್ಬರ್ ತೋಟದ ಬಗ್ಗೆ ಯಾವುದೇ ಪ್ರಶ್ನೆ ಕೇಳಿ."}
         ]
         
     for msg in st.session_state.chat_messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        if msg["role"] == "user":
+            st.markdown(f'<div class="chat-bubble-user">{msg["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="chat-bubble-bot">{msg["content"].replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
             
-    if prompt := st.chat_input("Type your question here (e.g. 'How to treat Anthracnose?')..." if not is_kannada else "ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ (ಉದಾ: 'ಆಂಥ್ರಾಕ್ನೋಸ್ ಚಿಕಿತ್ಸೆ ಹೇಗೆ?')..."):
+    if prompt := st.chat_input("Ask a question about rubber trees..." if not is_kannada else "ರಬ್ಬರ್ ತೋಟದ ಬಗ್ಗೆ ಪ್ರಶ್ನೆ ಕೇಳಿ..."):
         st.session_state.chat_messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-            
-        last_disease = st.session_state.get("last_scan_disease", None)
-        last_sev = st.session_state.get("last_scan_severity", None)
-        reply = get_chatbot_reply(prompt, last_disease, last_sev, is_kannada)
-        
-        st.session_state.chat_messages.append({"role": "assistant", "content": reply})
-        with st.chat_message("assistant"):
-            st.markdown(reply)
+        last_d = st.session_state.get("last_scan_disease", None)
+        last_s = st.session_state.get("last_scan_severity", None)
+        ans = get_chatbot_reply(prompt, last_d, last_s, is_kannada)
+        st.session_state.chat_messages.append({"role": "assistant", "content": ans})
+        st.rerun()
 
-# ---------------------------------------------------------
-# Tab 3: Disease Knowledge Base
-# ---------------------------------------------------------
-with tab_kb:
-    st.markdown("### 📚 Comprehensive Rubber Disease Compendium" if not is_kannada else "### 📚 ರಬ್ಬರ್ ರೋಗಗಳ ಸಮಗ್ರ ಮಾಹಿತಿ ಕೋಶ")
+# =========================================================
+# VIEW 4: DISEASE LIBRARY (Matching Android Guide)
+# =========================================================
+elif "Library" in st.session_state.active_tab or "ಕೋಶ" in st.session_state.active_tab:
+    st.markdown(f"""
+    <div style="margin-bottom:12px;">
+        <div style="font-size:18px; font-weight:800; color:#1B5E20;">{"Rubber Disease Compendium" if not is_kannada else "ರಬ್ಬರ್ ರೋಗಗಳ ಸಮಗ್ರ ಮಾಹಿತಿ ಕೋಶ"}</div>
+        <div style="font-size:12px; color:#616161;">{"Field identification guide and treatments for rubber trees in Karnataka." if not is_kannada else "ಕರ್ನಾಟಕದ ರಬ್ಬರ್ ಮರಗಳ ರೋಗ ಲಕ್ಷಣಗಳು ಮತ್ತು ಚಿಕಿತ್ಸಾ ವಿಧಾನಗಳು."}</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     lang_key = "kn" if is_kannada else "en"
     for d_name, d_info in RECOMMENDATIONS.items():
@@ -1364,59 +1650,10 @@ with tab_kb:
         with st.expander(f"🍂 {data['name']}", expanded=(d_name == "Abnormal Leaf Fall")):
             st.markdown(f"**Pathogen:** `{data.get('pathogen', 'N/A')}`")
             st.write(data["description"])
-            
-            c_kb1, c_kb2 = st.columns(2)
-            with c_kb1:
-                st.markdown(f"**Symptoms:**\n{data['symptoms']}")
-                st.markdown(f"**Organic Treatment:**\n{data['organic']}")
-                st.markdown(f"**Fertilizer Schedule:**\n{data['fertilizer']}")
-            with c_kb2:
-                st.markdown(f"**Causes & Environment:**\n{data['causes']}")
-                st.markdown(f"**Chemical Control:**\n{data['chemical']}")
-                st.markdown(f"**Prevention:**\n{data['prevention']}")
+            st.markdown(f"**🔍 Symptoms:**\n{data['symptoms']}")
+            st.markdown(f"**🍀 Organic Treatment:**\n{data['organic']}")
+            st.markdown(f"**🧪 Chemical Fungicide:**\n{data['chemical']}")
+            st.markdown(f"**🌾 Fertilizer Schedule:**\n{data['fertilizer']}")
+            st.markdown(f"**🛡️ Prevention:**\n{data['prevention']}")
+            st.markdown(f"**⏱️ Recovery Time:**\n{data['recovery']}")
 
-# ---------------------------------------------------------
-# Tab 4: System Pipeline & Architecture
-# ---------------------------------------------------------
-with tab_pipeline:
-    st.markdown("### ⚙️ End-to-End System Pipeline" if not is_kannada else "### ⚙️ ತಾಂತ್ರಿಕ ಪ್ರಕ್ರಿಯೆ ಮತ್ತು ವಿನ್ಯಾಸ")
-    
-    st.markdown("""
-    ```
-    Raw Leaf Image Upload / Camera Capture
-                     │
-                     ▼
-          [OpenCV HSV Segmentation] ──► Extracts Green, Yellow/Brown, Dark & White Pixels
-                     │
-                     ▼
-           [Contour Detection] ───────► Locates largest leaf & eliminates background clutter
-                     │
-                     ▼
-         [Quality Validation Checks] ─► Validates Leaf Area Coverage >= 40%, Sharpness >= 30, Exposure (45-225)
-                     │
-                     ▼
-        [Illumination & Shadow CLAHE] ─► Equalizes luminance (L channel in Lab space)
-                     │
-                     ▼
-         [Bilateral Denoising & Mask] ─► Sharpens lesions & blurs sensor noise
-                     │
-                     ▼
-         [MobileNetV2 TFLite Model] ──► Multi-output inference (<80ms latency)
-                     │
-            ┌────────┴────────┐
-            ▼                 ▼
-    [Class Probability]   [Feature Map (7×7×1280)]
-            │                 │
-            ▼                 ▼
-    [Confidence Guard]    [Grad-CAM Saliency Overlay]
-            │                 │
-            └────────┬────────┘
-                     ▼
-        [OpenCV Severity Estimation] ──► Calculates % of infected leaf area
-                     │
-                     ▼
-    Bilingual Management Advisory + One-Click PDF Report
-    ```
-    """)
-    st.markdown("---")
-    st.write("Developed for Karnataka rubber plantation owners. Built with MobileNetV2, OpenCV, TensorFlow Lite, and Streamlit.")
