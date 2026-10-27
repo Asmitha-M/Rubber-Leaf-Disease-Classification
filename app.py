@@ -1120,7 +1120,7 @@ if "show_severity" not in st.session_state:
 
 is_kannada = "ಕನ್ನಡ" in st.session_state.selected_lang
 
-# Mobile Android Authentic Styling
+# Mobile Android Authentic Responsive Styling
 st.markdown("""
 <style>
 /* Hide Streamlit default UI chrome */
@@ -1129,47 +1129,51 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 .stDeployButton {display:none;}
 
-/* Android system fonts & background */
+/* Android system fonts & clean background */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
-html, body, [class*="css"] {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #0E1E11 !important;
+html, body, [data-testid="stAppViewContainer"] {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    background-color: #F4F7F4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-/* Smartphone phone viewport container */
+/* 100% Fluid on mobile phones, max-width 480px centered on desktop */
 .main .block-container {
-    max-width: 440px !important;
-    padding-top: 0.5rem !important;
-    padding-bottom: 2rem !important;
-    padding-left: 0.8rem !important;
-    padding-right: 0.8rem !important;
+    max-width: 480px !important;
+    width: 100% !important;
+    padding-top: 0.8rem !important;
+    padding-bottom: 3rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     margin: 0 auto !important;
-    background: #F4F7F4 !important;
-    min-height: 94vh !important;
-    border-radius: 28px !important;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45) !important;
-    border: 1px solid #2E5A34 !important;
 }
 
-/* Android Status Bar */
-.phone-status-bar {
-    background: #1B5E20;
-    color: #FFFFFF;
-    padding: 6px 16px;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 20px 20px 0 0;
-    margin: -0.5rem -0.8rem 10px -0.8rem;
-    letter-spacing: 0.5px;
+@media (max-width: 600px) {
+    .main .block-container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        padding-top: 0.5rem !important;
+    }
+}
+
+/* Prevent Streamlit columns from breaking or stacking vertically on mobile */
+div[data-testid="stHorizontalBlock"] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+    min-width: 0 !important;
+    flex: 1 1 0% !important;
 }
 
 /* Toolbar Header */
-.phone-toolbar {
+.phone-toolbar-card {
     background: #FFFFFF;
-    padding: 10px 14px;
+    padding: 8px 14px;
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -1183,6 +1187,8 @@ html, body, [class*="css"] {
     font-weight: 800;
     color: #1B5E20;
     letter-spacing: -0.3px;
+    text-align: center;
+    width: 100%;
 }
 
 /* Rounded Leaf Image Card */
@@ -1212,30 +1218,47 @@ html, body, [class*="css"] {
     margin-bottom: 12px;
 }
 .phone-disease-title {
-    font-size: 21px;
+    font-size: 20px;
     font-weight: 800;
     color: #1B5E20;
+    line-height: 1.2;
 }
+
+/* Status Badges */
 .phone-badge-diseased {
     background: #C62828;
     color: #FFFFFF;
     font-weight: 800;
     font-size: 11px;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 6px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 .phone-badge-healthy {
     background: #2E7D32;
     color: #FFFFFF;
     font-weight: 800;
     font-size: 11px;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 6px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    white-space: nowrap;
 }
+.phone-badge-invalid {
+    background: #546E7A;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
 .phone-divider-line {
     height: 1px;
     background: #EEEEEE;
@@ -1293,25 +1316,13 @@ html, body, [class*="css"] {
     font-weight: 700 !important;
     padding: 0.55rem 0.9rem !important;
     font-size: 13px !important;
+    width: 100% !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------------
-# Simulated Android Status Bar (Every Screen)
-# ---------------------------------------------------------
-st.markdown("""
-<div class="phone-status-bar">
-    <span>9:36</span>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <span>📶 5G+</span>
-        <span>🔋 96%</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
 # =========================================================
-# SCREEN 1: HOME (Exact match of fragment_home.xml & media_1793030512273.png)
+# SCREEN 1: HOME (Exact match of fragment_home.xml)
 # =========================================================
 if st.session_state.current_screen == "home":
     # Top Toolbar
@@ -1322,7 +1333,7 @@ if st.session_state.current_screen == "home":
             st.session_state.selected_lang = "ಕನ್ನಡ (Kannada)" if st.session_state.selected_lang == "English" else "English"
             st.rerun()
     with c_h2:
-        st.markdown("<div style='text-align:center; font-size:20px; font-weight:800; color:#1B5E20; padding-top:4px;'>RubberGuard AI</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align:center; font-size:20px; font-weight:800; color:#1B5E20; padding-top:4px;'>🍃 RubberGuard AI</div>", unsafe_allow_html=True)
     with c_h3:
         if st.button("💬", key="btn_open_chat_top", help="Open RubberGuard Chatbot"):
             st.session_state.current_screen = "chatbot"
@@ -1435,62 +1446,66 @@ elif st.session_state.current_screen == "scan":
 
     if uploaded_image is not None:
         raw_np = np.array(uploaded_image)
-        with st.spinner("Analyzing leaf with MobileNetV2..." if not is_kannada else "ತಪಾಸಣೆ ನಡೆಯುತ್ತಿದೆ..."):
+        with st.spinner("Analyzing image with MobileNetV2..." if not is_kannada else "ತಪಾಸಣೆ ನಡೆಯುತ್ತಿದೆ..."):
             prep_224, segmented_img, val_metrics = preprocess_and_validate(raw_np)
 
-        if not val_metrics["passed"]:
-            st.error(f"⚠️ {val_metrics['error']}")
-        else:
-            interpreter, weights = load_tflite_model()
-            if interpreter is not None:
-                input_details = interpreter.get_input_details()
-                output_details = interpreter.get_output_details()
+        interpreter, weights = load_tflite_model()
+        if interpreter is not None:
+            input_details = interpreter.get_input_details()
+            output_details = interpreter.get_output_details()
 
-                input_data = np.expand_dims(prep_224.astype(np.float32), axis=0)
-                interpreter.set_tensor(input_details[0]['index'], input_data)
+            input_data = np.expand_dims(prep_224.astype(np.float32) if prep_224 is not None else cv2.resize(raw_np, (224, 224)).astype(np.float32), axis=0)
+            interpreter.set_tensor(input_details[0]['index'], input_data)
 
-                t0 = time.time()
-                interpreter.invoke()
-                latency_ms = (time.time() - t0) * 1000
+            t0 = time.time()
+            interpreter.invoke()
+            latency_ms = (time.time() - t0) * 1000
 
-                feat_map = interpreter.get_tensor(output_details[0]['index'])
-                probs = interpreter.get_tensor(output_details[1]['index'])[0]
+            feat_map = interpreter.get_tensor(output_details[0]['index'])
+            probs = interpreter.get_tensor(output_details[1]['index'])[0]
 
-                max_idx = int(np.argmax(probs))
-                confidence = float(probs[max_idx]) * 100.0
-                predicted_class = CLASSES[max_idx]
+            max_idx = int(np.argmax(probs))
+            confidence = float(probs[max_idx]) * 100.0
+            predicted_class = CLASSES[max_idx]
 
-                is_healthy = predicted_class == "Healthy"
+            # Determine category: Background, Healthy, or Diseased
+            is_background = (predicted_class == "Background / Non-Rubber Leaf") or (not val_metrics["passed"] and confidence < 50.0)
+            is_healthy = (predicted_class == "Healthy") and not is_background
+            is_diseased = (not is_background) and (not is_healthy)
+
+            sev_pct, sev_label, sev_color = (0.0, "Healthy / Trace", "#2E7D32")
+            gradcam_full = None
+            if not is_background:
                 sev_pct, sev_label, sev_color = estimate_severity(raw_np, is_healthy)
+                gradcam_full = generate_gradcam_overlay(feat_map, weights, max_idx, raw_np, bbox=val_metrics.get("bbox") if val_metrics else None)
 
-                # Generate Grad-CAM
-                gradcam_full = generate_gradcam_overlay(feat_map, weights, max_idx, raw_np, bbox=val_metrics.get("bbox"))
+            # Update stats: Background scans do NOT count as diseased!
+            st.session_state.total_scans += 1
+            if is_healthy:
+                st.session_state.healthy_scans += 1
+            elif is_diseased:
+                st.session_state.diseased_scans += 1
 
-                # Update stats
-                st.session_state.total_scans += 1
-                if is_healthy:
-                    st.session_state.healthy_scans += 1
-                else:
-                    st.session_state.diseased_scans += 1
-
-                st.session_state.last_prediction = {
-                    "image": uploaded_image,
-                    "raw_np": raw_np,
-                    "predicted_class": predicted_class,
-                    "confidence": confidence,
-                    "latency_ms": latency_ms,
-                    "probs": probs,
-                    "is_healthy": is_healthy,
-                    "sev_pct": sev_pct,
-                    "sev_label": sev_label,
-                    "sev_color": sev_color,
-                    "gradcam_full": gradcam_full
-                }
-                st.session_state.current_screen = "prediction"
-                st.rerun()
+            st.session_state.last_prediction = {
+                "image": uploaded_image,
+                "raw_np": raw_np,
+                "predicted_class": predicted_class,
+                "confidence": confidence,
+                "latency_ms": latency_ms,
+                "probs": probs,
+                "is_background": is_background,
+                "is_healthy": is_healthy,
+                "is_diseased": is_diseased,
+                "sev_pct": sev_pct,
+                "sev_label": sev_label,
+                "sev_color": sev_color,
+                "gradcam_full": gradcam_full
+            }
+            st.session_state.current_screen = "prediction"
+            st.rerun()
 
 # =========================================================
-# SCREEN 3: PREDICTION RESULTS (Exact match of fragment_prediction.xml & media__1785686797129.png)
+# SCREEN 3: PREDICTION RESULTS (Matching Android fragment_prediction.xml)
 # =========================================================
 elif st.session_state.current_screen == "prediction":
     pred = st.session_state.last_prediction
@@ -1511,17 +1526,32 @@ elif st.session_state.current_screen == "prediction":
             st.session_state.current_screen = "chatbot"
             st.rerun()
 
-    # Scanned Leaf Image (Centered rounded card matching fragment_prediction.xml)
+    # Scanned Image Preview
     st.image(pred["image"], use_container_width=True)
 
-    # Result Details Card (Matching Android fragment_prediction.xml card_result_details)
-    badge_cls = "phone-badge-healthy" if pred["is_healthy"] else "phone-badge-diseased"
-    badge_label = ("Healthy" if not is_kannada else "ಆರೋಗ್ಯಕರ") if pred["is_healthy"] else ("Diseased" if not is_kannada else "ರೋಗ ಬಾಧಿತ")
+    is_bg = pred.get("is_background", False) or (pred["predicted_class"] == "Background / Non-Rubber Leaf")
+    is_hl = pred.get("is_healthy", False)
+    is_ds = pred.get("is_diseased", False)
 
+    # Status Badge and Title
+    if is_bg:
+        badge_cls = "phone-badge-invalid"
+        badge_label = "Invalid / Non-Leaf" if not is_kannada else "ಅಮಾನ್ಯ ಚಿತ್ರ"
+        display_title = "Non-Rubber Leaf / Background" if not is_kannada else "ಅಮಾನ್ಯ / ರಬ್ಬರ್ ಎಲೆಯಲ್ಲ"
+    elif is_hl:
+        badge_cls = "phone-badge-healthy"
+        badge_label = "Healthy" if not is_kannada else "ಆರೋಗ್ಯಕರ"
+        display_title = "Healthy Rubber Leaf" if not is_kannada else "ಆರೋಗ್ಯಕರ ರಬ್ಬರ್ ಎಲೆ"
+    else:
+        badge_cls = "phone-badge-diseased"
+        badge_label = "Diseased" if not is_kannada else "ರೋಗ ಬಾಧಿತ"
+        display_title = pred['predicted_class']
+
+    # Details Card
     st.markdown(f"""
     <div class="phone-details-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="phone-disease-title">{pred['predicted_class']}</div>
+            <div class="phone-disease-title">{display_title}</div>
             <div class="{badge_cls}">{badge_label}</div>
         </div>
         <div class="phone-divider-line"></div>
@@ -1538,74 +1568,111 @@ elif st.session_state.current_screen == "prediction":
     </div>
     """, unsafe_allow_html=True)
 
-    # Optional Severity Card
-    if st.session_state.show_severity and not pred["is_healthy"]:
+    # CASE A: BACKGROUND / NON-RUBBER LEAF (NO TREATMENTS, NO SEVERITY!)
+    if is_bg:
         st.markdown(f"""
-        <div class="phone-details-card" style="border-left: 5px solid {pred['sev_color']};">
-            <div style="font-size:12px; color:#757575; font-weight:700; text-transform:uppercase;">{"Visual Severity Assessment" if not is_kannada else "ರೋಗದ ತೀವ್ರತೆ ಪ್ರಮಾಣ"}</div>
-            <div style="font-size:20px; font-weight:800; color:{pred['sev_color']}; margin-top:4px;">{pred['sev_label']} ({pred['sev_pct']:.1f}% area)</div>
+        <div style="background:#ECEFF1; border-radius:14px; padding:14px 16px; border:1px solid #CFD8DC; margin: 10px 0 16px 0; color:#37474F; font-size:13px; line-height:1.5;">
+            <div style="font-weight:800; color:#263238; margin-bottom:4px; font-size:14px;">{"⚠️ No Rubber Leaf Detected" if not is_kannada else "⚠️ ರಬ್ಬರ್ ಎಲೆ ಪತ್ತೆಯಾಗಿಲ್ಲ"}</div>
+            <div>{"The captured image appears to be a background, surface, or non-rubber object. Disease evaluation and chemical sprays are not applicable. Please take a clear photo of an authentic rubber leaf." if not is_kannada else "ಸೆರೆಹಿಡಿದ ಚಿತ್ರವು ರಬ್ಬರ್ ಎಲೆಯಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಸ್ಪಷ್ಟವಾದ ನೈಜ ರಬ್ಬರ್ ಎಲೆಯ ಫೋಟೋ ತೆಗೆಯಿರಿ."}</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # Class Probabilities Card (matching card_probability_chart in fragment_prediction.xml)
-    st.markdown(f"""
-    <div style="background:#FFFFFF; border-radius:18px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid #E0E0E0; margin-bottom:14px;">
-        <div style="font-size:14px; font-weight:800; color:#212121; margin-bottom:8px;">{"Class Probabilities" if not is_kannada else "ವರ್ಗವಾರು ಸಂಭವನೀಯತೆ"}</div>
-    </div>
-    """, unsafe_allow_html=True)
+        if st.button("📷 " + ("Scan Another Leaf" if not is_kannada else "ಮತ್ತೊಂದು ಎಲೆ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ"), type="primary", use_container_width=True):
+            st.session_state.current_screen = "scan"
+            st.rerun()
 
-    for idx, cls_name in enumerate(CLASSES):
-        prob_val = float(pred["probs"][idx]) * 100.0
-        if prob_val > 1.0 or cls_name == pred["predicted_class"]:
-            c_cl1, c_cl2 = st.columns([3, 1])
-            with c_cl1:
-                st.caption(f"{cls_name}")
-                st.progress(prob_val / 100.0)
-            with c_cl2:
-                st.markdown(f"<div style='font-size:12px; font-weight:700; color:#1B5E20; text-align:right; padding-top:6px;'>{prob_val:.1f}%</div>", unsafe_allow_html=True)
+        if st.button("🏠 " + ("Return to Dashboard" if not is_kannada else "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ"), use_container_width=True):
+            st.session_state.current_screen = "home"
+            st.rerun()
 
-    # Flow Action Buttons (matching ll_flow_actions in fragment_prediction.xml)
-    if not pred["is_healthy"]:
+    # CASE B: HEALTHY LEAF
+    elif is_hl:
+        st.markdown(f"""
+        <div style="background:#E8F5E9; border-radius:14px; padding:14px 16px; border:1px solid #C8E6C9; margin: 10px 0 16px 0; color:#1B5E20; font-size:13px; line-height:1.5;">
+            <div style="font-weight:800; color:#1B5E20; margin-bottom:4px; font-size:14px;">{"🌿 Optimal Plant Health" if not is_kannada else "🌿 ಉತ್ತಮ ಆರೋಗ್ಯ ಸ್ಥಿತಿ"}</div>
+            <div>{"The leaf shows intact lamina and normal chlorophyll with no fungal spots or necrotic lesions. No chemical fungicide intervention is required. Continue regular plantation nutrition." if not is_kannada else "ಎಲೆಯು ಸಂಪೂರ್ಣ ಆರೋಗ್ಯಕರವಾಗಿದೆ. ಯಾವುದೇ ಶಿಲೀಂಧ್ರನಾಶಕದ ಅಗತ್ಯವಿಲ್ಲ. ನಿಯಮಿತ ಪೋಷಕಾಂಶ ನಿರ್ವಹಣೆ ಮುಂದುವರಿಸಿ."}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        c_h_act1, c_h_act2 = st.columns(2)
+        with c_h_act1:
+            if st.button("📖 " + ("Preventive Care" if not is_kannada else "ನಿರ್ವಹಣಾ ಸಲಹೆ"), use_container_width=True):
+                st.session_state.current_screen = "recommendations"
+                st.rerun()
+        with c_h_act2:
+            if st.button("📷 " + ("Scan Again" if not is_kannada else "ಮತ್ತೆ ಸ್ಕ್ಯಾನ್"), type="primary", use_container_width=True):
+                st.session_state.current_screen = "scan"
+                st.rerun()
+
+    # CASE C: DISEASE DETECTED
+    else:
+        # Optional Severity Card
+        if st.session_state.show_severity:
+            st.markdown(f"""
+            <div class="phone-details-card" style="border-left: 5px solid {pred['sev_color']};">
+                <div style="font-size:12px; color:#757575; font-weight:700; text-transform:uppercase;">{"Visual Severity Assessment" if not is_kannada else "ರೋಗದ ತೀವ್ರತೆ ಪ್ರಮಾಣ"}</div>
+                <div style="font-size:20px; font-weight:800; color:{pred['sev_color']}; margin-top:4px;">{pred['sev_label']} ({pred['sev_pct']:.1f}% area)</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Class Probabilities Card
+        st.markdown(f"""
+        <div style="background:#FFFFFF; border-radius:18px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid #E0E0E0; margin-bottom:14px;">
+            <div style="font-size:14px; font-weight:800; color:#212121; margin-bottom:8px;">{"Class Probabilities" if not is_kannada else "ವರ್ಗವಾರು ಸಂಭವನೀಯತೆ"}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        for idx, cls_name in enumerate(CLASSES):
+            prob_val = float(pred["probs"][idx]) * 100.0
+            if prob_val > 1.0 or cls_name == pred["predicted_class"]:
+                c_cl1, c_cl2 = st.columns([3, 1])
+                with c_cl1:
+                    st.caption(f"{cls_name}")
+                    st.progress(prob_val / 100.0)
+                with c_cl2:
+                    st.markdown(f"<div style='font-size:12px; font-weight:700; color:#1B5E20; text-align:right; padding-top:6px;'>{prob_val:.1f}%</div>", unsafe_allow_html=True)
+
+        # Action Buttons
         if st.button("⚡ " + ("View Severity Analysis" if not is_kannada else "ರೋಗದ ತೀವ್ರತೆ ವೀಕ್ಷಿಸಿ"), use_container_width=True):
             st.session_state.show_severity = not st.session_state.show_severity
             st.rerun()
 
-    if st.button("🔥 " + ("View Grad-CAM Heatmap" if not is_kannada else "ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್ ವೀಕ್ಷಿಸಿ"), type="primary", use_container_width=True):
-        st.session_state.current_screen = "gradcam"
-        st.rerun()
+        if st.button("🔥 " + ("View Grad-CAM Heatmap" if not is_kannada else "ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್ ವೀಕ್ಷಿಸಿ"), type="primary", use_container_width=True):
+            st.session_state.current_screen = "gradcam"
+            st.rerun()
 
-    if st.button("📖 " + ("View Recommendations" if not is_kannada else "ಕೃಷಿ ಪರಿಹಾರ ವೀಕ್ಷಿಸಿ"), use_container_width=True):
-        st.session_state.current_screen = "recommendations"
-        st.rerun()
+        if st.button("📖 " + ("View Recommendations" if not is_kannada else "ಕೃಷಿ ಪರಿಹಾರ ವೀಕ್ಷಿಸಿ"), use_container_width=True):
+            st.session_state.current_screen = "recommendations"
+            st.rerun()
 
-    c_act1, c_act2 = st.columns(2)
-    with c_act1:
-        if st.button("💾 " + ("Save Record" if not is_kannada else "ದಾಖಲಿಸಿ"), use_container_width=True):
-            st.toast("✅ Diagnostic record saved to plantation history!" if not is_kannada else "✅ ತಪಾಸಣಾ ದಾಖಲೆಯನ್ನು ಉಳಿಸಲಾಗಿದೆ!")
-    with c_act2:
-        lang_key = "kn" if is_kannada else "en"
-        rec = RECOMMENDATIONS.get(pred["predicted_class"], {}).get(lang_key, {})
-        pdf_file = generate_pdf_report(
-            farmer_name="Karnataka Rubber Grower",
-            disease_name=pred["predicted_class"],
-            confidence=pred["confidence"],
-            severity_label=pred["sev_label"],
-            severity_pct=pred["sev_pct"],
-            rec=rec,
-            original_pil=pred["image"],
-            heatmap_pil=Image.fromarray(pred["gradcam_full"] if pred["gradcam_full"] is not None else pred["raw_np"]),
-            lang=lang_key
-        )
-        st.download_button(
-            label="📄 " + ("Export PDF" if not is_kannada else "ಪಿಡಿಎಫ್ ರಫ್ತು"),
-            data=pdf_file,
-            file_name=f"RubberGuard_{pred['predicted_class'].replace(' ', '_')}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+        c_act1, c_act2 = st.columns(2)
+        with c_act1:
+            if st.button("💾 " + ("Save Record" if not is_kannada else "ದಾಖಲಿಸಿ"), use_container_width=True):
+                st.toast("✅ Diagnostic record saved to plantation history!" if not is_kannada else "✅ ತಪಾಸಣಾ ದಾಖಲೆಯನ್ನು ಉಳಿಸಲಾಗಿದೆ!")
+        with c_act2:
+            lang_key = "kn" if is_kannada else "en"
+            rec = RECOMMENDATIONS.get(pred["predicted_class"], {}).get(lang_key, {})
+            pdf_file = generate_pdf_report(
+                farmer_name="Karnataka Rubber Grower",
+                disease_name=pred["predicted_class"],
+                confidence=pred["confidence"],
+                severity_label=pred["sev_label"],
+                severity_pct=pred["sev_pct"],
+                rec=rec,
+                original_pil=pred["image"],
+                heatmap_pil=Image.fromarray(pred["gradcam_full"] if pred["gradcam_full"] is not None else pred["raw_np"]),
+                lang=lang_key
+            )
+            st.download_button(
+                label="📄 " + ("Export PDF" if not is_kannada else "ಪಿಡಿಎಫ್ ರಫ್ತು"),
+                data=pdf_file,
+                file_name=f"RubberGuard_{pred['predicted_class'].replace(' ', '_')}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
 
 # =========================================================
-# SCREEN 4: GRAD-CAM HEATMAP (Exact match of fragment_gradcam.xml & media_1792858938847.png)
+# SCREEN 4: GRAD-CAM HEATMAP (Matching fragment_gradcam.xml)
 # =========================================================
 elif st.session_state.current_screen == "gradcam":
     pred = st.session_state.last_prediction
@@ -1622,7 +1689,7 @@ elif st.session_state.current_screen == "gradcam":
     with c_g2:
         st.markdown(f"<div style='font-size:19px; font-weight:800; color:#1B5E20; padding-top:4px;'>{'Grad-CAM Heatmap' if not is_kannada else 'ಗ್ರಾಡ್-ಕ್ಯಾಮ್ ಹೀಟ್‌ಮ್ಯಾಪ್'}</div>", unsafe_allow_html=True)
 
-    # Segmented Tabs (Original vs Grad-CAM Overlay, matching media_1792858938847.png)
+    # Segmented Tabs (Original vs Grad-CAM Overlay)
     c_tab1, c_tab2 = st.columns(2)
     with c_tab1:
         is_orig_active = st.session_state.gradcam_tab == "Original"
@@ -1644,7 +1711,7 @@ elif st.session_state.current_screen == "gradcam":
         else:
             st.image(pred["image"], caption="Original Leaf", use_container_width=True)
 
-    # Visual Explanation (XAI) Card (Exact verbatim match of media_1792858938847.png)
+    # Visual Explanation (XAI) Card (Verbatim match of media_1792858938847.png)
     st.markdown(f"""
     <div class="phone-xai-card">
         <div class="phone-xai-header">{"Visual Explanation (XAI)" if not is_kannada else "ದೃಶ್ಯ ವಿವರಣೆ (XAI)"}</div>
@@ -1658,7 +1725,7 @@ elif st.session_state.current_screen == "gradcam":
     """, unsafe_allow_html=True)
 
 # =========================================================
-# SCREEN 5: CHATBOT (Exact match of fragment_chatbot.xml & media_1792725418417.png)
+# SCREEN 5: CHATBOT (Matching fragment_chatbot.xml)
 # =========================================================
 elif st.session_state.current_screen == "chatbot":
     # Top Toolbar
@@ -1698,7 +1765,7 @@ elif st.session_state.current_screen == "chatbot":
         else:
             st.markdown(f'<div class="chat-bubble-bot">{msg["content"].replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
 
-    # Chat Input (matching placeholder from media_1792725418417.png)
+    # Chat Input
     input_placeholder = "Ask about disease, treatment, fertilizer..." if not is_kannada else "ರೋಗ, ಚಿಕಿತ್ಸೆ, ಗೊಬ್ಬರದ ಬಗ್ಗೆ ಕೇಳಿ..."
     if prompt := st.chat_input(input_placeholder):
         st.session_state.chat_messages.append({"role": "user", "content": prompt})
