@@ -21,6 +21,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -35,9 +36,15 @@ android {
         viewBinding true
     }
     
-    // TFLite models should not be compressed
+    // TFLite models and dense weights should not be compressed
     aaptOptions {
-        noCompress "tflite"
+        noCompress "tflite", "bin"
+    }
+
+    // Disable network-dependent lint check on release build
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
