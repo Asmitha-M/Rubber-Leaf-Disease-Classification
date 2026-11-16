@@ -8,6 +8,17 @@ app/build/
 
 # Local Environment & Secrets
 local.properties
+.env
+*.env
+*.env.*
+!.env.example
+!*.env.example
+.neon/
+*.sqlite
+*.sqlite*
+*.sqlite3
+*.db
+*backup*.sqlite
 .idea/
 *.iml
 .navigation/
@@ -35,3 +46,4 @@ scratch_test_blur.py
 scratch_leaf_crop.jpg
 test_annotated_result.jpg
 user_screen_crop.jpg
+node_modules/

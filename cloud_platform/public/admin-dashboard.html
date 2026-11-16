@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — RubberGuard AI</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar" style="background-color: var(--primary-dark);">
+    <a href="/" class="brand">
+      <span class="brand-icon">🛡️</span>
+      <div>
+        <div class="brand-title">RubberGuard AI</div>
+        <span class="brand-badge" style="background-color: var(--accent-gold); color: #000;">Administrator Hub</span>
+      </div>
+    </a>
+    <div id="nav-auth-container"></div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Top Controls Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+      <div>
+        <h1 style="color: var(--primary-dark); font-size: 2rem;">Evaluation & Deployment Control Center</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Real-time tracking of 20+ real user evaluations, Android scan validations, and verified feedback submissions.
+        </p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <span id="auto-refresh-indicator" style="font-size: 0.85rem; background: #e8f5e9; color: var(--primary); padding: 0.35rem 0.75rem; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid #c8e6c9;">
+          🟢 Live Sync (20s)
+        </span>
+        <span id="last-updated-text" style="font-size: 0.8rem; color: var(--text-secondary);"></span>
+        <button onclick="loadAdminData()" class="btn btn-outline" style="color: var(--primary); border-color: var(--surface-border); background: white;">
+          🔄 Refresh Now
+        </button>
+      </div>
+    </div>
+
+    <!-- Reviewer Target Progress Banner -->
+    <div class="target-banner">
+      <div class="target-header">
+        <div>
+          <div style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.85rem; opacity: 0.85; margin-bottom: 0.25rem;">
+            Academic Evaluation Goal
+          </div>
+          <div class="target-title">Target: 20–30 Verified Independent Reviewers</div>
+          <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.25rem;">
+            Only genuine evaluations backed by accepted on-device leaf scans qualify.
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 0.85rem; opacity: 0.85;">VERIFIED SUBMISSIONS</div>
+          <div class="target-count" id="target-count-text">0 / 20</div>
+        </div>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="target-progress-fill" style="width: 0%;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; opacity: 0.85; margin-top: 0.5rem;">
+        <span id="target-percentage-text">0% Completed</span>
+        <span id="target-remaining-text">20 reviews remaining for target</span>
+      </div>
+    </div>
+
+    <!-- Metrics Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+      <div class="card" style="padding: 1.25rem 1.5rem;">
+        <div class="card-title" style="font-size: 1.05rem;"><span>👥</span> Registered Testers</div>
+        <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary); margin: 0.35rem 0;" id="metric-testers">0</div>
+        <p class="card-subtitle" style="margin: 0; font-size: 0.8rem;">Total accounts registered</p>
+      </div>
+
+      <div class="card" style="padding: 1.25rem 1.5rem;">
+        <div class="card-title" style="font-size: 1.05rem;"><span>⚡</span> Active Testers</div>
+        <div style="font-size: 2.1rem; font-weight: 800; color: #0277bd; margin: 0.35rem 0;" id="metric-active-testers">0</div>
+        <p class="card-subtitle" style="margin: 0; font-size: 0.8rem;">Logged in or active on app</p>
+      </div>
+
+      <div class="card" style="padding: 1.25rem 1.5rem;">
+        <div class="card-title" style="font-size: 1.05rem;"><span>🌿</span> Testers with Scans</div>
+        <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary-light); margin: 0.35rem 0;" id="metric-scanned-testers">0</div>
+        <p class="card-subtitle" style="margin: 0; font-size: 0.8rem;">Completed >= 1 valid leaf scan</p>
+      </div>
+
+      <div class="card" style="padding: 1.25rem 1.5rem;">
+        <div class="card-title" style="font-size: 1.05rem;"><span>📸</span> Total Scans</div>
+        <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary-dark); margin: 0.35rem 0;" id="metric-scans">0</div>
+        <p class="card-subtitle" style="margin: 0; font-size: 0.8rem;">
+          <span style="color: var(--success); font-weight: 600;" id="metric-scans-accepted">0 Accepted</span> •
+          <span style="color: var(--error);" id="metric-scans-rejected">0 Rejected</span>
+        </p>
+      </div>
+
+      <div class="card" style="padding: 1.25rem 1.5rem;">
+        <div class="card-title" style="font-size: 1.05rem;"><span>⭐</span> Review Rating</div>
+        <div style="font-size: 2.1rem; font-weight: 800; color: var(--accent-gold); margin: 0.35rem 0;" id="metric-rating">0.0 / 5.0</div>
+        <p class="card-subtitle" style="margin: 0; font-size: 0.8rem;" id="metric-feedback-count">From 0 verified evaluations</p>
+      </div>
+    </div>
+
+    <!-- Disease Distribution & CSV Export Row -->
+    <div class="grid grid-2" style="margin-bottom: 2.5rem;">
+      <div class="card">
+        <div class="card-title"><span>📊</span> Disease Classification Distribution</div>
+        <p class="card-subtitle">Breakdown of validated on-device detections</p>
+        <div id="disease-breakdown-container" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Loading distribution...</div>
+        </div>
+      </div>
+
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div class="card-title"><span>📥</span> Evaluation Data Exports (CSV)</div>
+          <p class="card-subtitle">Export official datasets for final viva demonstration and thesis report</p>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+            Clean, formatted comma-separated files containing anonymized tester logs, model performance confidence intervals, and rubric survey evaluations.
+          </p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <a href="/api/admin/export/feedback.csv" class="btn btn-primary" style="justify-content: flex-start;">
+            <span>📄</span> Download Verified Feedback Dataset (CSV)
+          </a>
+          <a href="/api/admin/export/scans.csv" class="btn btn-outline" style="color: var(--primary); border-color: var(--primary); justify-content: flex-start;">
+            <span>🌿</span> Download Leaf Diagnostic Scan Records (CSV)
+          </a>
+          <a href="/api/admin/export/testers.csv" class="btn btn-outline" style="color: var(--text-secondary); border-color: var(--surface-border); justify-content: flex-start;">
+            <span>👥</span> Download Registered Testers Registry (CSV)
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs for Detailed Data Tables -->
+    <div class="card" style="padding: 1.25rem 1.75rem 2rem;">
+      <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--surface-border); padding-bottom: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <button onclick="switchTab('feedback')" id="tab-btn-feedback" class="btn btn-sm btn-primary">
+          📝 Verified Feedback (<span id="tab-count-feedback">0</span>)
+        </button>
+        <button onclick="switchTab('testers')" id="tab-btn-testers" class="btn btn-sm btn-outline" style="color: var(--text-main); border-color: var(--surface-border);">
+          👥 Evaluator Registry (<span id="tab-count-testers">0</span>)
+        </button>
+        <button onclick="switchTab('scans')" id="tab-btn-scans" class="btn btn-sm btn-outline" style="color: var(--text-main); border-color: var(--surface-border);">
+          🍃 Scan Log History (<span id="tab-count-scans">0</span>)
+        </button>
+      </div>
+
+      <!-- Tab 1: Verified Feedback -->
+      <div id="tab-content-feedback">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Feedback ID</th>
+                <th>Verification Code</th>
+                <th>Tester Name</th>
+                <th>Rating</th>
+                <th>Ease of Use</th>
+                <th>Disease Accuracy</th>
+                <th>Comments</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="table-feedback-body">
+              <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading feedback...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Registered Testers -->
+      <div id="tab-content-testers" style="display: none;">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Tester ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Registered On</th>
+                <th>Last Activity / Login</th>
+                <th>Accepted Scans</th>
+                <th>Verification Code</th>
+                <th>Feedback Status</th>
+              </tr>
+            </thead>
+            <tbody id="table-testers-body">
+              <tr><td colspan="9" style="text-align: center; padding: 2rem;">Loading testers...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 3: Scan Logs -->
+      <div id="tab-content-scans" style="display: none;">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Scan ID</th>
+                <th>Tester</th>
+                <th>Timestamp</th>
+                <th>Predicted Pathogen</th>
+                <th>Confidence</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Reason / Code</th>
+              </tr>
+            </thead>
+            <tbody id="table-scans-body">
+              <tr><td colspan="8" style="text-align: center; padding: 2rem;">Loading scans...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-copy">
+      © 2026 RubberGuard AI Project Team • Administrator Console
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    let autoRefreshTimer = null;
+    function startAutoRefresh() {
+      if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+      autoRefreshTimer = setInterval(() => {
+        loadAdminData(true);
+      }, 20000); // Auto-refresh every 20 seconds
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
+        alert('Access denied. Administrator privileges required.');
+        window.location.href = '/login';
+        return;
+      }
+      loadAdminData();
+      startAutoRefresh();
+    });
+
+    let currentTab = 'feedback';
+    function switchTab(tabName) {
+      currentTab = tabName;
+      ['feedback', 'testers', 'scans'].forEach(t => {
+        document.getElementById(`tab-content-${t}`).style.display = (t === tabName) ? 'block' : 'none';
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          btn.className = 'btn btn-sm btn-primary';
+          btn.style.color = '#ffffff';
+        } else {
+          btn.className = 'btn btn-sm btn-outline';
+          btn.style.color = 'var(--text-main)';
+          btn.style.borderColor = 'var(--surface-border)';
+        }
+      });
+    }
+
+    async function loadAdminData(isSilent = false) {
+      // 1. Load Metrics
+      const metRes = await apiRequest('/admin/metrics', 'GET', null, true);
+      if (metRes.ok && metRes.data.success) {
+        const m = metRes.data.metrics;
+        document.getElementById('metric-testers').innerText = m.testersCount;
+        document.getElementById('metric-active-testers').innerText = m.activeTesters || 0;
+        document.getElementById('metric-scanned-testers').innerText = m.testersWithScans || 0;
+        document.getElementById('metric-scans').innerText = m.totalScans;
+        document.getElementById('metric-scans-accepted').innerText = `${m.acceptedScans} Accepted`;
+        document.getElementById('metric-scans-rejected').innerText = `${m.rejectedScans} Rejected`;
+        document.getElementById('metric-rating').innerText = `${m.averageRating} / 5.0`;
+        document.getElementById('metric-feedback-count').innerText = `From ${m.verifiedFeedback} verified evaluations`;
+        document.getElementById('last-updated-text').innerText = `Updated: ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}`;
+
+        // Progress target
+        const target = m.targetReviewers || 20;
+        const current = m.verifiedFeedback || 0;
+        const pct = m.progressPercent || 0;
+        document.getElementById('target-count-text').innerText = `${current} / ${target}`;
+        document.getElementById('target-progress-fill').style.width = `${pct}%`;
+        document.getElementById('target-percentage-text').innerText = `${pct}% Completed`;
+
+        const remaining = Math.max(0, target - current);
+        document.getElementById('target-remaining-text').innerText = remaining > 0
+          ? `${remaining} reviews remaining for target`
+          : 'Target achieved! Outstanding evaluation participation.';
+
+        // Disease breakdown
+        const disContainer = document.getElementById('disease-breakdown-container');
+        if (m.diseaseBreakdown && m.diseaseBreakdown.length > 0) {
+          disContainer.innerHTML = m.diseaseBreakdown.map(d => `
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.2rem;">
+                <strong>${d.disease}</strong>
+                <span>${d.count} scans</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: #e0e5e0; border-radius: 4px; overflow: hidden;">
+                <div style="height: 100%; background: var(--primary); width: ${(d.count / (m.acceptedScans || 1) * 100)}%;"></div>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          disContainer.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.88rem;">No accepted scans recorded yet.</div>';
+        }
+      }
+
+      // 2. Load Feedback List
+      const fbRes = await apiRequest('/admin/feedback', 'GET', null, true);
+      if (fbRes.ok && fbRes.data.success) {
+        const list = fbRes.data.feedback;
+        document.getElementById('tab-count-feedback').innerText = list.length;
+        const tbody = document.getElementById('table-feedback-body');
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No feedback submissions yet.</td></tr>';
+        } else {
+          tbody.innerHTML = list.map(f => `
+            <tr>
+              <td><code>${f.feedback_id}</code></td>
+              <td><code>${f.verification_code}</code></td>
+              <td><strong>${f.tester_name || 'Anonymous'}</strong></td>
+              <td>⭐ ${f.overall_rating} / 5</td>
+              <td>${f.ease_of_use || '—'}</td>
+              <td>${f.disease_accuracy_rating || '—'}</td>
+              <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${f.comments || '—'}</td>
+              <td><span class="code-badge ${f.verification_status === 'VERIFIED' ? 'badge-used' : 'badge-pending'}">${f.verification_status}</span></td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      // 3. Load Testers List
+      const testRes = await apiRequest('/admin/testers', 'GET', null, true);
+      if (testRes.ok && testRes.data.success) {
+        const testers = testRes.data.testers;
+        document.getElementById('tab-count-testers').innerText = testers.length;
+        const tbody = document.getElementById('table-testers-body');
+        if (testers.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">No registered testers yet.</td></tr>';
+        } else {
+          tbody.innerHTML = testers.map(t => {
+            const regDate = t.created_at ? new Date(t.created_at).toLocaleDateString() : '—';
+            const lastLogin = t.last_login_at
+              ? `<span style="color: var(--success); font-weight: 600;">● ${new Date(t.last_login_at).toLocaleDateString()}</span>`
+              : '<span style="color: var(--text-secondary); font-style: italic;">Never</span>';
+            return `
+              <tr>
+                <td><code>${t.uid}</code></td>
+                <td><strong>${t.username}</strong></td>
+                <td>${t.full_name}</td>
+                <td>${t.email}</td>
+                <td>${regDate}</td>
+                <td>${lastLogin}</td>
+                <td><strong>${t.accepted_scans}</strong></td>
+                <td>${t.verification_code ? `<code>${t.verification_code}</code>` : 'None'}</td>
+                <td><span class="code-badge ${t.feedback_status === 'VERIFIED' ? 'badge-used' : 'badge-pending'}">${t.feedback_status || 'PENDING'}</span></td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 4. Load Scans List
+      const scanRes = await apiRequest('/admin/scans', 'GET', null, true);
+      if (scanRes.ok && scanRes.data.success) {
+        const scans = scanRes.data.scans;
+        document.getElementById('tab-count-scans').innerText = scans.length;
+        const tbody = document.getElementById('table-scans-body');
+        if (scans.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No scans recorded yet.</td></tr>';
+        } else {
+          tbody.innerHTML = scans.map(s => `
+            <tr>
+              <td><code>${s.scan_id}</code></td>
+              <td>${s.farmer_name || s.username || 'Tester'}</td>
+              <td>${new Date(s.timestamp).toLocaleString()}</td>
+              <td><strong>${s.predicted_disease}</strong></td>
+              <td>${(s.confidence * 100).toFixed(1)}%</td>
+              <td>${s.severity_label} (${(s.severity_percentage || 0).toFixed(1)}%)</td>
+              <td><span class="code-badge ${s.scan_status === 'ACCEPTED' ? 'badge-used' : 'badge-pending'}">${s.scan_status}</span></td>
+              <td>${s.rejection_reason || (s.verification_code_id ? `<code>${s.verification_code_id}</code>` : '—')}</td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

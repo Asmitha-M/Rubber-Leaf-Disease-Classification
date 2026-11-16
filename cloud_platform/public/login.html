@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — RubberGuard AI</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍃</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <span class="brand-icon">🍃</span>
+      <div>
+        <div class="brand-title">RubberGuard AI</div>
+        <span class="brand-badge">Evaluation Portal</span>
+      </div>
+    </a>
+    <div id="nav-auth-container">
+      <a href="/register" class="btn btn-sm btn-accent">Register Tester</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="form-card">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</div>
+        <h2 style="color: var(--primary-dark); font-size: 1.75rem;">Unified Account Sign In</h2>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.35rem;">
+          Use the same credentials across the web portal and Android application.
+        </p>
+      </div>
+
+      <div id="alert-box" style="display: none;"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="identifier">Username or Email</label>
+          <input type="text" id="identifier" class="form-control" placeholder="e.g. suresh_farmer or tester@example.com" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn btn-primary btn-block" style="padding: 0.85rem; margin-top: 1rem;">
+          Sign In to Portal
+        </button>
+      </form>
+
+      <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--surface-border); text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+        Don't have an account yet? <a href="/register" style="color: var(--primary); font-weight: 600; text-decoration: none;">Register as Reviewer</a>
+      </div>
+
+      <div style="margin-top: 1rem; text-align: center; font-size: 0.85rem; color: var(--text-secondary);">
+        <details>
+          <summary style="cursor: pointer; color: var(--primary-light);">Forgot your password?</summary>
+          <div style="margin-top: 0.75rem; text-align: left; background: #fafbfa; padding: 1rem; border-radius: 6px; border: 1px solid var(--surface-border);">
+            <p style="margin-bottom: 0.5rem;">Enter your registered email address:</p>
+            <input type="email" id="reset-email" class="form-control" placeholder="Registered email" style="margin-bottom: 0.5rem;">
+            <input type="password" id="reset-new-password" class="form-control" placeholder="New password (min 6 chars)" style="margin-bottom: 0.5rem;">
+            <button type="button" onclick="handlePasswordReset()" class="btn btn-sm btn-primary">Update Password</button>
+          </div>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-copy">
+      © 2026 RubberGuard AI Project Team • SMVITM Udupi
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // If already logged in, redirect
+      if (Auth.isLoggedIn()) {
+        window.location.href = Auth.isAdmin() ? '/admin-dashboard' : '/tester-dashboard';
+      }
+
+      const form = document.getElementById('login-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAlert('alert-box');
+
+        const identifier = document.getElementById('identifier').value.trim();
+        const password = document.getElementById('password').value;
+        const submitBtn = document.getElementById('btn-submit');
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Signing In...';
+
+        const res = await apiRequest('/auth/login', 'POST', { identifier, password }, false);
+
+        if (res.ok && res.data.success) {
+          Auth.setSession(res.data.token, res.data.user);
+          showAlert('alert-box', 'Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            if (res.data.user.role === 'admin') {
+              window.location.href = '/admin-dashboard';
+            } else {
+              window.location.href = '/tester-dashboard';
+            }
+          }, 800);
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Sign In to Portal';
+          showAlert('alert-box', res.data.error || 'Invalid credentials. Please verify your username and password.', 'error');
+        }
+      });
+    });
+
+    async function handlePasswordReset() {
+      const email = document.getElementById('reset-email').value.trim();
+      const newPassword = document.getElementById('reset-new-password').value;
+      if (!email || !newPassword) {
+        alert('Please provide your email and new password');
+        return;
+      }
+      const res = await apiRequest('/auth/reset-password', 'POST', { email, newPassword }, false);
+      if (res.ok && res.data.success) {
+        alert(res.data.message);
+      } else {
+        alert(res.data.error || 'Failed to reset password');
+      }
+    }
+  </script>
+</body>
+</html>

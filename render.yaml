@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: rubberguard-ai
+    runtime: node
+    rootDir: cloud_platform
+    buildCommand: npm install
+    startCommand: node server.js
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@rubberguard.org
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: APK_DOWNLOAD_URL
+        sync: false

@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+*.sqlite
+*.sqlite*
+*.db
+*backup*.sqlite
+.neon
+*.apk

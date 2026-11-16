@@ -9,7 +9,10 @@ import com.rubber.disease.data.AppDatabase
 import com.rubber.disease.data.ScanRecordEntity
 import com.rubber.disease.data.ScanRepository
 import com.rubber.disease.data.UserEntity
+import com.rubber.disease.utils.CloudSyncHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,10 +41,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun login(username: String, passwordPlain: String, onResult: (UserEntity?) -> Unit) {
         viewModelScope.launch {
-            val user = repository.getUserByUsername(username)
-            if (user != null && user.passwordHash == hashPassword(passwordPlain)) {
-                _currentUser.postValue(user)
-                onResult(user)
+            // 1. Check local Room DB first
+            val localUser = repository.getUserByUsername(username)
+            if (localUser != null && localUser.passwordHash == hashPassword(passwordPlain)) {
+                _currentUser.postValue(localUser)
+                onResult(localUser)
+                return@launch
+            }
+
+            // 2. If not found locally or credentials mismatch, check Cloud server (if online)
+            val cloudRes = withContext(Dispatchers.IO) {
+                CloudSyncHelper.loginCloud(getApplication(), username, passwordPlain)
+            }
+            if (cloudRes.success && cloudRes.user != null) {
+                // Cache user in local Room database for offline access
+                val cachedUser = UserEntity(
+                    username = cloudRes.user.username,
+                    email = cloudRes.user.email,
+                    passwordHash = hashPassword(passwordPlain),
+                    fullName = cloudRes.user.fullName,
+                    phone = cloudRes.user.phone,
+                    location = cloudRes.user.location
+                )
+                repository.registerUser(cachedUser)
+                val finalUser = repository.getUserByUsername(cloudRes.user.username) ?: cachedUser
+                _currentUser.postValue(finalUser)
+                onResult(finalUser)
             } else {
                 onResult(null)
             }
@@ -96,6 +121,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val id = repository.insertRecord(record)
             loadAllRecords()
+
+            // Background sync to Cloud (if online) to register scan and get verification code
+            withContext(Dispatchers.IO) {
+                val scanId = "scan_app_${id}_${System.currentTimeMillis()}"
+                CloudSyncHelper.syncScan(getApplication(), record, scanId)
+            }
+
             onComplete(id)
         }
     }

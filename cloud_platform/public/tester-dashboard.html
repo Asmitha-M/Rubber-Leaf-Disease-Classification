@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tester Portal — RubberGuard AI</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍃</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <span class="brand-icon">🍃</span>
+      <div>
+        <div class="brand-title">RubberGuard AI</div>
+        <span class="brand-badge">Tester Portal</span>
+      </div>
+    </a>
+    <div id="nav-auth-container"></div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Welcome Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+      <div>
+        <h1 id="user-greeting" style="color: var(--primary-dark); font-size: 2rem;">Tester Evaluation Workspace</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Track your on-device diagnostic scans and manage your project feedback verification code.
+        </p>
+      </div>
+      <div>
+        <a href="/api/apk/download" class="btn btn-primary">
+          <span>📲</span> Download APK (v1.0)
+        </a>
+      </div>
+    </div>
+
+    <!-- Verification Code Hero Card -->
+    <div id="code-section" class="code-card">
+      <div style="font-size: 0.9rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">
+        Official Evaluation Verification Code
+      </div>
+
+      <div id="code-content">
+        <div style="padding: 1.5rem 0;">
+          <div style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+            Checking evaluation status...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview Grid -->
+    <div class="grid grid-3" style="margin-bottom: 2.5rem;">
+      <div class="card">
+        <div class="card-title"><span>👤</span> Tester Profile</div>
+        <div id="profile-details" style="font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem;">
+          <div>Loading profile...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📱</span> App Instructions</div>
+        <ol style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem;">
+          <li>Install <code>RubberGuard-AI-release.apk</code>.</li>
+          <li>Log in with your username: <strong id="instruction-username">...</strong>.</li>
+          <li>Capture or select a rubber leaf image.</li>
+          <li>Review disease, severity, and Grad-CAM.</li>
+          <li>Tap <strong>Save Record</strong> to record and sync.</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📋</span> Feedback Protocol</div>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.75rem; margin-top: 0.5rem;">
+          Once your code is issued, copy it and submit your rating on the official Google Form or our companion feedback portal.
+        </p>
+        <a href="/feedback-portal" class="btn btn-sm btn-outline" style="color: var(--primary); border-color: var(--primary); width: 100%;">
+          <span>📝</span> Open Evaluation Form
+        </a>
+      </div>
+    </div>
+
+    <!-- Tester Scan History -->
+    <div class="card" style="margin-bottom: 3rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <div class="card-title" style="margin-bottom: 0.2rem;"><span>🌿</span> Synced Leaf Scan Records</div>
+          <p class="card-subtitle" style="margin-bottom: 0;">All scans performed and synced from your native Android device</p>
+        </div>
+        <button onclick="loadDashboardData()" class="btn btn-sm btn-outline" style="color: var(--primary); border-color: var(--surface-border);">
+          🔄 Refresh Scans
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Scan ID</th>
+              <th>Timestamp</th>
+              <th>Predicted Disease</th>
+              <th>Confidence</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Verification Code</th>
+            </tr>
+          </thead>
+          <tbody id="scans-table-body">
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                Loading scan history...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-copy">
+      © 2026 RubberGuard AI Project Team • SMVITM Udupi
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.isLoggedIn()) {
+        window.location.href = '/login';
+        return;
+      }
+      loadDashboardData();
+    });
+
+    async function loadDashboardData() {
+      const user = Auth.getUser();
+      if (user) {
+        document.getElementById('user-greeting').innerText = `Welcome, ${user.fullName}`;
+        document.getElementById('instruction-username').innerText = user.username;
+      }
+
+      // 1. Fetch Profile & Evaluation state
+      const profRes = await apiRequest('/auth/me', 'GET', null, true);
+      if (profRes.ok && profRes.data.success) {
+        const u = profRes.data.user;
+        const ev = profRes.data.evaluation;
+
+        document.getElementById('profile-details').innerHTML = `
+          <div><strong>Name:</strong> ${u.fullName}</div>
+          <div><strong>Username:</strong> <code>${u.username}</code></div>
+          <div><strong>Email:</strong> ${u.email}</div>
+          <div><strong>Location:</strong> ${u.location || 'Karnataka'}</div>
+          <div><strong>Accepted Scans:</strong> ${ev.acceptedScansCount}</div>
+        `;
+
+        renderCodeCard(ev);
+      }
+
+      // 2. Fetch My Scans
+      const scanRes = await apiRequest('/scans/my-scans', 'GET', null, true);
+      const tbody = document.getElementById('scans-table-body');
+
+      if (scanRes.ok && scanRes.data.success) {
+        const scans = scanRes.data.scans;
+        if (!scans || scans.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-secondary);">
+                <div>🍃 No scans synced yet.</div>
+                <div style="font-size: 0.85rem; margin-top: 0.35rem;">
+                  Open RubberGuard AI on your phone, complete a leaf scan, and tap "Save" to sync your first record.
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = scans.map(s => {
+            const isAccepted = s.scan_status === 'ACCEPTED';
+            const badgeClass = isAccepted ? 'badge-used' : 'badge-pending';
+            const confPercent = (s.confidence * 100).toFixed(1) + '%';
+            return `
+              <tr>
+                <td><code>${s.scan_id}</code></td>
+                <td>${new Date(s.timestamp).toLocaleString()}</td>
+                <td><strong>${s.predicted_disease}</strong></td>
+                <td>${confPercent}</td>
+                <td>${s.severity_label} (${(s.severity_percentage || 0).toFixed(1)}%)</td>
+                <td><span class="code-badge ${badgeClass}">${s.scan_status}</span></td>
+                <td>${s.verification_code_id ? `<code>${s.verification_code_id}</code>` : '—'}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function renderCodeCard(ev) {
+      const container = document.getElementById('code-content');
+
+      if (ev.verificationCode) {
+        const isUsed = ev.codeStatus === 'USED';
+        container.innerHTML = `
+          <div class="code-display" id="my-verif-code">${ev.verificationCode}</div>
+          <div style="margin-bottom: 1rem;">
+            <span class="code-badge ${isUsed ? 'badge-used' : 'badge-issued'}">
+              ${isUsed ? 'VERIFIED & SUBMITTED' : 'READY FOR GOOGLE FORM EVALUATION'}
+            </span>
+          </div>
+          <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.25rem;">
+            ${isUsed
+              ? 'Thank you! Your feedback has been verified and permanently recorded in the project evaluation dataset.'
+              : 'Copy this code and paste it into the project evaluation Google Form to authenticate your review as a genuine user.'}
+          </p>
+          <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <button onclick="copyToClipboard('${ev.verificationCode}', this)" class="btn btn-primary">
+              📋 Copy Verification Code
+            </button>
+            <a href="/feedback-portal?code=${ev.verificationCode}" class="btn btn-outline" style="color: var(--primary-dark); border-color: var(--primary-dark);">
+              ✍️ Submit Evaluation Feedback
+            </a>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="padding: 1.5rem 0;">
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              ⏳ Code Not Issued Yet
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 550px; margin: 0 auto 1rem;">
+              To prevent fraudulent feedback, verification codes are only generated after performing a successful rubber leaf disease scan on the Android application.
+            </p>
+            <a href="/api/apk/download" class="btn btn-sm btn-primary">
+              📲 Download APK & Perform Scan
+            </a>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RubberGuard AI — Rubber Leaf Disease Classification</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍃</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <span class="brand-icon">🍃</span>
+      <div>
+        <div class="brand-title">RubberGuard AI</div>
+        <span class="brand-badge">Evaluation Portal</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#diseases">Diseases</a></li>
+      <li><a href="#technology">Technology</a></li>
+      <li><a href="#instructions">Testing Guide</a></li>
+      <li><a href="#download">Download APK</a></li>
+    </ul>
+    <div id="nav-auth-container" style="display: flex; gap: 0.75rem; align-items: center;">
+      <a href="/login" class="btn btn-sm btn-outline">Sign In</a>
+      <a href="/register" class="btn btn-sm btn-accent">Register Tester</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-pill">SMVITM Final Year Engineering Project • Evaluation Portal</span>
+      <h1>Rubber Leaf Disease Classification for Plantation Owners in Karnataka</h1>
+      <p>
+        An edge-AI diagnostic system combining MobileNetV2 deep learning, OpenCV computer vision severity estimation,
+        and Grad-CAM explainability to assist small-scale rubber growers across Dakshina Kannada, Udupi, and Malnad districts.
+      </p>
+      <div class="hero-actions">
+        <a href="#download" class="btn btn-accent">
+          <span>📲</span> Download Release APK (v1.0)
+        </a>
+        <a href="/register" class="btn btn-outline">
+          <span>👤</span> Join as Verified Reviewer
+        </a>
+        <a href="/login" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4);">
+          <span>🔑</span> Sign In
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <!-- Evaluation Notice Card -->
+    <div class="card" style="border-left: 5px solid var(--primary-light); margin-bottom: 2.5rem; background: #ffffff;">
+      <h3 style="color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span>ℹ️</span> Native Android Evaluation Protocol
+      </h3>
+      <p style="font-size: 0.95rem; color: var(--text-secondary);">
+        <strong>Important notice for evaluators:</strong> Disease classification, OpenCV severity analysis, and Grad-CAM heatmaps
+        run <strong>100% on-device</strong> inside the native Android APK using TensorFlow Lite. Inference does NOT occur inside
+        web browsers. Please install the APK on an Android device (Android 8.0+), perform a live leaf scan, and use your issued
+        verification code to submit feedback on Google Forms.
+      </p>
+    </div>
+
+    <!-- Project Objectives -->
+    <section id="about" style="margin-bottom: 3.5rem;">
+      <h2 style="font-size: 1.85rem; color: var(--primary-dark); margin-bottom: 0.5rem;">Project Overview & Objectives</h2>
+      <p style="color: var(--text-secondary); max-width: 850px; margin-bottom: 1.5rem;">
+        Natural rubber (Hevea brasiliensis) is a crucial commercial crop in coastal and Western Ghats Karnataka.
+        Fungal foliage epidemics cause severe defoliation, latex yield reduction of up to 45%, and premature tree mortality.
+      </p>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-title"><span>🔬</span> Edge ML Inference</div>
+          <p class="card-subtitle">Complete Offline Operation</p>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Enables smallholders in remote hilly plantations with zero 4G/cellular coverage to detect foliar diseases in under 80 milliseconds.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📊</span> Dual-Stage Severity</div>
+          <p class="card-subtitle">OpenCV HSV Segmentation</p>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Quantifies necrotic vs chlorotic tissue percentages across 4 HSV color channels, categorizing damage from Trace to Severe.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>🗣️</span> Bilingual Guidance</div>
+          <p class="card-subtitle">Kannada & English Audio</p>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">
+            Full UI and spoken text-to-speech support in Kannada and English, ensuring accessibility for non-English literate local farmers.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diseases Covered -->
+    <section id="diseases" style="margin-bottom: 3.5rem;">
+      <h2 style="font-size: 1.85rem; color: var(--primary-dark); margin-bottom: 0.5rem;">Target Rubber Foliar Pathogens</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+        The system classifies rubber foliage into 5 distinct diagnostic categories:
+      </p>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.4rem;">1. Corynespora Leaf Fall (CLF)</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+            <em>Pathogen: Corynespora cassiicola</em>
+          </p>
+          <p style="font-size: 0.9rem;">
+            Characterized by distinctive circular or irregular necrotic spots with a dark brown halo, often with a "railway track" appearance along leaf veins.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.4rem;">2. Colletotrichum Leaf Disease</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+            <em>Pathogen: Colletotrichum gloeosporioides</em>
+          </p>
+          <p style="font-size: 0.9rem;">
+            Causes anthracnose lesions, tip burn, and distorted tender flush leaves during high-humidity monsoon spells.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.4rem;">3. Powdery Mildew / Oidium</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+            <em>Pathogen: Oidium heveae</em>
+          </p>
+          <p style="font-size: 0.9rem;">
+            Appears as white powdery fungal patches on young tender leaves during refoliation season (January to March), leading to crinkling and leaf drop.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.4rem;">4. Healthy Foliage</h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+            <em>Hevea brasiliensis Control</em>
+          </p>
+          <p style="font-size: 0.9rem;">
+            Vigorous, dark-green trifoliate leaves with no active fungal sporulation, chlorosis, or necrotic spotting.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testing Instructions -->
+    <section id="instructions" style="margin-bottom: 3.5rem;">
+      <h2 style="font-size: 1.85rem; color: var(--primary-dark); margin-bottom: 0.5rem;">Evaluation & Feedback Instructions</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+        Follow these 6 steps to complete your evaluation as one of our 20+ verified academic reviewers:
+      </p>
+
+      <div class="grid grid-3">
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">1️⃣</div>
+          <h4 style="margin-bottom: 0.5rem;">Create Account</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Register on this website with your name, phone, and email to obtain your unified RubberGuard credentials.
+          </p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">2️⃣</div>
+          <h4 style="margin-bottom: 0.5rem;">Download APK</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Download the signed release APK below and install it on any Android device running Android 8.0 or newer.
+          </p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">3️⃣</div>
+          <h4 style="margin-bottom: 0.5rem;">Perform Scan</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Open the app, sign in, and scan a rubber leaf using camera or gallery. Inspect the disease prediction, severity, and Grad-CAM.
+          </p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">4️⃣</div>
+          <h4 style="margin-bottom: 0.5rem;">Save Diagnosis</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Tap "Save" to save your diagnosis in local history. When online, your scan syncs automatically with our cloud registry.
+          </p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">5️⃣</div>
+          <h4 style="margin-bottom: 0.5rem;">Get Verification Code</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Upon successful scan verification, a single-use code formatted as <code>RG-XXXXXX</code> is issued in your Tester Dashboard.
+          </p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">6️⃣</div>
+          <h4 style="margin-bottom: 0.5rem;">Submit Google Form</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Fill out the independent project evaluation Google Form, pasting your <code>RG-XXXXXX</code> code to qualify your review!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- APK Download Box -->
+    <section id="download" style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.85rem; color: var(--primary-dark); margin-bottom: 0.5rem;">Download RubberGuard AI APK</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+        Official production release APK package containing pre-bundled MobileNetV2 weights and native OpenCV binaries.
+      </p>
+
+      <div class="apk-box">
+        <div class="apk-meta">
+          <h3 style="font-size: 1.5rem; color: var(--primary-dark); display: flex; align-items: center; gap: 0.5rem;">
+            <span>📦</span> RubberGuard-AI-release.apk
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">
+            Package: <code>com.rubber.disease</code> • Version: <strong>1.0.0 (Release Build)</strong>
+          </p>
+          <div class="apk-badge-list">
+            <span class="apk-badge">📦 File Size: ~170 MB</span>
+            <span class="apk-badge">📱 Min SDK: Android 8.0 (API 26)</span>
+            <span class="apk-badge">🎯 Target SDK: Android 14 (API 34)</span>
+            <span class="apk-badge">🔒 Signed Release Build</span>
+            <span class="apk-badge">⚡ Universal ABI (arm64, armeabi-v7a)</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end;">
+          <a href="/api/apk/download" class="btn btn-primary" style="padding: 0.85rem 1.75rem; font-size: 1.05rem;">
+            <span>⬇️</span> Download APK File
+          </a>
+          <span style="font-size: 0.8rem; color: var(--text-secondary);">Direct download from secure server</span>
+        </div>
+      </div>
+
+      <!-- Installation Instructions Accordion / Card -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <h4 style="margin-bottom: 0.5rem; color: var(--primary);">How to install on your Android device:</h4>
+        <ol style="margin-left: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.4rem;">
+          <li>Click the <strong>Download APK File</strong> button above from your Android phone or transfer the file from your computer.</li>
+          <li>When prompted by Chrome/Browser, tap <strong>"Download anyway"</strong> (standard warning for direct APK installs outside Play Store).</li>
+          <li>Open your Downloads folder and tap on <code>RubberGuard-AI-release.apk</code>.</li>
+          <li>If prompted, toggle <strong>"Allow from this source"</strong> in Settings to permit sideloading.</li>
+          <li>Tap <strong>Install</strong>. Once installed, tap <strong>Open</strong> to launch RubberGuard AI!</li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div>
+        <div style="font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.25rem;">RubberGuard AI</div>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); max-width: 500px;">
+          Final Year Engineering Project Demonstration & Evaluation System.
+          Shri Madhwa Vadiraja Institute of Technology & Management (SMVITM), Bantakal, Udupi.
+        </p>
+      </div>
+      <div>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+          Quick Links: <a href="/login" style="color: var(--accent); text-decoration: none;">Login</a> |
+          <a href="/register" style="color: var(--accent); text-decoration: none;">Register</a> |
+          <a href="/admin-dashboard" style="color: var(--accent); text-decoration: none;">Admin Panel</a>
+        </p>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 RubberGuard AI Project Team • All rights reserved.
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

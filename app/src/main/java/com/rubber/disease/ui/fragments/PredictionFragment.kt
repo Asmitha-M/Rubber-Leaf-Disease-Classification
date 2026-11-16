@@ -375,7 +375,13 @@ class PredictionFragment : Fragment() {
             isSaved = true
             activity?.runOnUiThread {
                 binding.btnSaveRecord.isEnabled = false
-                Toast.makeText(context, "Report saved to history successfully!", Toast.LENGTH_SHORT).show()
+                val code = CloudSyncHelper.getLatestVerificationCode(requireContext())
+                val msg = if (!code.isNullOrEmpty()) {
+                    "Report saved! Verification Code: $code"
+                } else {
+                    "Report saved to history successfully!"
+                }
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                 onSaved()
             }
         }
