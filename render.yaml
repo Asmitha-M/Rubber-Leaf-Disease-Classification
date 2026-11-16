@@ -19,4 +19,4 @@ services:
       - key: ADMIN_PASSWORD
         sync: false
       - key: APK_DOWNLOAD_URL
-        sync: false
+        value: https://github.com/Asmitha-M/Rubber-Leaf-Disease-Classification/releases/download/v1.0.0/RubberGuard-AI-release.apk

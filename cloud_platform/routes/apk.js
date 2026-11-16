@@ -5,6 +5,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 
 const APK_PATH = path.join(__dirname, '..', 'public', 'apk', 'RubberGuard-AI-release.apk');
+const DEFAULT_RELEASE_URL = 'https://github.com/Asmitha-M/Rubber-Leaf-Disease-Classification/releases/download/v1.0.0/RubberGuard-AI-release.apk';
 
 // GET /api/apk/info
 router.get('/info', (req, res) => {
@@ -37,8 +38,9 @@ router.get('/info', (req, res) => {
 // GET /api/apk/download
 router.get('/download', (req, res) => {
   // If external release URL is configured (e.g. GitHub Releases for >100MB files), redirect directly
-  if (process.env.APK_DOWNLOAD_URL) {
-    return res.redirect(302, process.env.APK_DOWNLOAD_URL);
+  const targetUrl = process.env.APK_DOWNLOAD_URL || DEFAULT_RELEASE_URL;
+  if (targetUrl) {
+    return res.redirect(302, targetUrl);
   }
 
   if (!fs.existsSync(APK_PATH)) {
