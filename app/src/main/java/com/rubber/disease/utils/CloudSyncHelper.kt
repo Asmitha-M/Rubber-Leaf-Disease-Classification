@@ -22,7 +22,7 @@ object CloudSyncHelper {
     private const val KEY_LATEST_CODE = "latest_verification_code"
 
     // Default development and local fallback URL
-    private const val DEFAULT_SERVER_URL = "http://10.0.2.2:5000"
+    private const val DEFAULT_SERVER_URL = "https://rubberguard-ai.onrender.com"
 
     fun getServerUrl(context: Context): String {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
